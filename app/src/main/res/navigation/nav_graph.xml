@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.gdd.rankingfilter.presentation.screen.splash.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash" >
+        <action
+            android:id="@+id/action_splashFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.gdd.rankingfilter.presentation.screen.home.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_libraryFragment"
+            app:destination="@id/libraryFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_videoEditorFragment"
+            app:destination="@id/videoEditorFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.gdd.rankingfilter.presentation.screen.setting.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" />
+    <fragment
+        android:id="@+id/libraryFragment"
+        android:name="com.gdd.rankingfilter.presentation.screen.library.LibraryFragment"
+        android:label="fragment_library"
+        tools:layout="@layout/fragment_library" >
+        <action
+            android:id="@+id/action_libraryFragment_to_videoPreviewFragment"
+            app:destination="@id/videoPreviewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/videoPreviewFragment"
+        android:name="com.gdd.rankingfilter.presentation.screen.video_preview.VideoPreviewFragment"
+        android:label="fragment_video_preview"
+        tools:layout="@layout/fragment_video_preview" />
+    <fragment
+        android:id="@+id/videoEditorFragment"
+        android:name="com.gdd.rankingfilter.presentation.screen.video_editor.VideoEditorFragment"
+        android:label="fragment_video_editor"
+        tools:layout="@layout/fragment_video_editor" />
+</navigation>
