@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:padding="@dimen/_10sdp"
+    android:layout_marginStart="@dimen/_10sdp"
+    android:background="#F2F3F5">
+
+<ImageView
+    android:id="@+id/tab_icon"
+    android:layout_width="@dimen/_18sdp"
+    android:layout_height="@dimen/_18sdp"
+    android:contentDescription="@null"
+    android:src="@drawable/ic_star"/>
+
+<TextView
+    android:id="@+id/tab_title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/_6sdp"
+    android:text="@string/trending"
+    android:textColor="@color/tab_text_selector"
+    android:textSize="@dimen/_14ssp"
+    android:fontFamily="@font/inter_18pt_medium" />
+</LinearLayout>

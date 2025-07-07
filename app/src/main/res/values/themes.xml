@@ -1,9 +1,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.RankingFilter" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Base.Theme.RankingFilter"
+        parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 
-    <style name="Theme.RankingFilter" parent="Base.Theme.RankingFilter" />
+    <style name="Theme.RankingFilter" parent="Base.Theme.RankingFilter"/>
+
+    <style name="Widget.App.TabLayout.Custom" parent="Widget.Material3.TabLayout">
+        <item name="tabRippleColor">@null</item>
+        <item name="tabIndicatorHeight">0dp</item>
+    </style>
 </resources>

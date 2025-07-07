@@ -2,4 +2,14 @@
     <string name="app_name">RankingFilter</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="loading">LOADING...</string>
+    <string name="this_action_may_contain_ads">This action may contain ads</string>
+    <string name="ranking_filter">Ranking Filter</string>
+    <string name="trending">Trending</string>
+    <string name="football">Football</string>
+    <string name="food">Food</string>
+    <string name="anime">Anime</string>
+    <string name="idol">Idol</string>
+    <string name="makeup">Makeup</string>
+    <string name="cartoon">Cartoon</string>
 </resources>

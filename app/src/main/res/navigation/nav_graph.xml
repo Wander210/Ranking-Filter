@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.gdd.rankingfilter.presentation.screen.splash.SplashFragment"
+        android:name="com.gdd.rankingfilter.view.screen.splash.SplashFragment"
         android:label="fragment_splash"
         tools:layout="@layout/fragment_splash" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.gdd.rankingfilter.presentation.screen.home.HomeFragment"
+        android:name="com.gdd.rankingfilter.view.screen.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -31,12 +31,12 @@
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
-        android:name="com.gdd.rankingfilter.presentation.screen.setting.SettingFragment"
+        android:name="com.gdd.rankingfilter.view.screen.setting.SettingFragment"
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting" />
     <fragment
         android:id="@+id/libraryFragment"
-        android:name="com.gdd.rankingfilter.presentation.screen.library.LibraryFragment"
+        android:name="com.gdd.rankingfilter.view.screen.library.LibraryFragment"
         android:label="fragment_library"
         tools:layout="@layout/fragment_library" >
         <action
@@ -45,12 +45,12 @@
     </fragment>
     <fragment
         android:id="@+id/videoPreviewFragment"
-        android:name="com.gdd.rankingfilter.presentation.screen.video_preview.VideoPreviewFragment"
+        android:name="com.gdd.rankingfilter.view.screen.video_preview.VideoPreviewFragment"
         android:label="fragment_video_preview"
         tools:layout="@layout/fragment_video_preview" />
     <fragment
         android:id="@+id/videoEditorFragment"
-        android:name="com.gdd.rankingfilter.presentation.screen.video_editor.VideoEditorFragment"
+        android:name="com.gdd.rankingfilter.view.screen.video_editor.VideoEditorFragment"
         android:label="fragment_video_editor"
         tools:layout="@layout/fragment_video_editor" />
 </navigation>
