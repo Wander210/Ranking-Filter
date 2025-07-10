@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
@@ -13,10 +14,11 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_90sdp"
+            android:layout_height="@dimen/_80sdp"
             android:paddingTop="@dimen/_20sdp"
-            android:paddingBottom="@dimen/_5sdp"
-            android:paddingHorizontal="@dimen/_10sdp">
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:background="@color/white"
+            app:layout_scrollFlags="scroll|enterAlways|snap">
 
             <TextView
                 android:id="@+id/tvTitle"
@@ -45,16 +47,15 @@
             style="@style/Widget.App.TabLayout.Custom"
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:paddingTop="@dimen/_10sdp"
             app:tabMode="scrollable"
             app:tabGravity="center"
             app:tabIndicatorHeight="0dp"
-            app:layout_scrollFlags="scroll|enterAlways"
             android:background="@color/white"/>
-        <!-- 'scroll' => được kéo khỏi màn; 'enterAlways' => kéo xuống là hiện lại ngay -->
+
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- 2) Nội dung cuộn (ViewPager2, RecyclerView...) -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager2"
         android:layout_width="match_parent"
@@ -62,4 +63,71 @@
         android:background="@color/white"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="@dimen/_250sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="@dimen/_40sdp"
+        android:background="@drawable/bottom_bar_background"
+        android:elevation="@dimen/_10sdp"
+        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior">
+
+        <!-- Home Icon -->
+        <ImageView
+            android:id="@+id/btnHome"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:src="@drawable/ic_home_dark"
+            android:contentDescription="@string/home"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginStart="@dimen/_20sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <View
+            android:id="@+id/bgBtnCamera"
+            android:layout_width="@dimen/_45sdp"
+            android:layout_height="@dimen/_45sdp"
+            android:background="@drawable/bg_btn_camera"
+            app:layout_constraintStart_toEndOf="@+id/btnHome"
+            app:layout_constraintEnd_toStartOf="@+id/btnPhoto"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <!-- Camera Icon -->
+        <ImageView
+            android:id="@+id/btnCamera"
+            android:layout_width="@dimen/_38sdp"
+            android:layout_height="@dimen/_38sdp"
+            android:src="@drawable/ic_camera"
+            android:contentDescription="@null"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:elevation="@dimen/_5sdp"
+            app:layout_constraintStart_toStartOf="@+id/bgBtnCamera"
+            app:layout_constraintEnd_toEndOf="@+id/bgBtnCamera"
+            app:layout_constraintTop_toTopOf="@+id/bgBtnCamera"
+            app:layout_constraintBottom_toBottomOf="@+id/bgBtnCamera"/>
+
+        <!-- Photo Icon -->
+        <ImageView
+            android:id="@+id/btnPhoto"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:src="@drawable/ic_photo"
+            android:contentDescription="@null"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginEnd="@dimen/_20sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

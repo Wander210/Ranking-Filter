@@ -1,15 +1,23 @@
 package com.gdd.rankingfilter.view.screen.home
 
 import android.graphics.drawable.GradientDrawable
+import android.util.Log
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import com.gdd.rankingfilter.R
 import com.gdd.rankingfilter.base.BaseFragment
 import com.gdd.rankingfilter.data.model.TabInfo
+import com.gdd.rankingfilter.data.model.Video
+import com.gdd.rankingfilter.data.repository.CloudinaryRepository
 import com.gdd.rankingfilter.databinding.FragmentHomeBinding
 import com.gdd.rankingfilter.databinding.TabCustomItemBinding
 import com.gdd.rankingfilter.extention.dpToPx
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.coroutines.launch
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
@@ -29,7 +37,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         )
     }
 
-    override fun setUpView(): Unit = with(binding) {
+    override fun setUpView() : Unit = with(binding) {
         viewPager2.adapter = FragmentPageAdapter(childFragmentManager, lifecycle)
 
         TabLayoutMediator(tabLayout, viewPager2) { tab, position ->

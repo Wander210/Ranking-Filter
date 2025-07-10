@@ -11,4 +11,9 @@
         <item name="tabRippleColor">@null</item>
         <item name="tabIndicatorHeight">0dp</item>
     </style>
+
+    <style name="Shape.BottomBar" parent="">
+        <item name="cornerSize">@dimen/_20sdp</item>
+        <item name="cornerFamily">rounded</item>
+    </style>
 </resources>

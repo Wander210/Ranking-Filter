@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_homeFragment_to_videoEditorFragment"
             app:destination="@id/videoEditorFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_videoPlayerFragment"
+            app:destination="@id/videoPlayerFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
@@ -53,4 +56,9 @@
         android:name="com.gdd.rankingfilter.view.screen.video_editor.VideoEditorFragment"
         android:label="fragment_video_editor"
         tools:layout="@layout/fragment_video_editor" />
+    <fragment
+        android:id="@+id/videoPlayerFragment"
+        android:name="com.gdd.rankingfilter.view.screen.video_player.VideoPlayerFragment"
+        android:label="fragment_video_player"
+        tools:layout="@layout/fragment_video_player" />
 </navigation>
