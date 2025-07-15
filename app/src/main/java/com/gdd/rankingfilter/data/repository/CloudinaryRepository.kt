@@ -2,7 +2,7 @@ package com.gdd.rankingfilter.data.repository
 
 import android.content.Context
 import android.util.Log
-import com.gdd.rankingfilter.ConfigManager
+import com.gdd.rankingfilter.util.ConfigManager
 import com.gdd.rankingfilter.data.model.Video
 import okhttp3.Credentials
 import okhttp3.OkHttpClient

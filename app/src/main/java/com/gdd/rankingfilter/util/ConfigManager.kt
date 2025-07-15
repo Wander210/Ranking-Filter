@@ -1,4 +1,4 @@
-package com.gdd.rankingfilter
+package com.gdd.rankingfilter.util
 
 import android.content.Context
 import android.util.Log

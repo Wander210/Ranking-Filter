@@ -7,7 +7,7 @@ import com.gdd.rankingfilter.R
 import com.gdd.rankingfilter.data.model.Video
 import com.gdd.rankingfilter.itemVideo
 
-class VideoEpoxyController(
+class VideoListController(
     private val context: Context,
     private val onVideoClick: (Video) -> Unit
 ) : EpoxyController() {
@@ -32,9 +32,8 @@ class VideoEpoxyController(
                 thumbnailUrl(thumbnailUrl)
                 author(video.context?.custom?.author)
                 likesCount(likesText)
-                isSelected(false)
                 onClick(View.OnClickListener {
-                    this@VideoEpoxyController.onVideoClick(video)
+                    this@VideoListController.onVideoClick(video)
                 })
             }
         }

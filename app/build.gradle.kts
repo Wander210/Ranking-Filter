@@ -4,6 +4,7 @@ plugins {
     id("androidx.navigation.safeargs.kotlin")
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    id ("kotlin-parcelize")
 }
 
 kapt {
@@ -74,6 +75,8 @@ dependencies {
     // Media3
     implementation("androidx.media3:media3-exoplayer:1.6.0")
     implementation("androidx.media3:media3-ui:1.6.0")
+    implementation("androidx.media3:media3-database:1.6.0")
+    implementation("androidx.media3:media3-datasource:1.6.0")
     // Glide
     implementation("com.github.bumptech.glide:glide:4.16.0")
     // ViewModel + LiveData

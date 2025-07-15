@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
@@ -41,14 +42,27 @@ abstract class BaseFragment<BINDING : ViewBinding>(private val bindingInflater: 
      * @param id Fragment id to move to
      * @param inclusive remove current fragment from backstack
      */
-    protected fun navigateTo(
-        id: Int,
-        inclusive: Boolean = false,
-    ) {
+    protected fun navigateTo(id: Int, inclusive: Boolean = false) {
         checkIfFragmentAttached {
-            navController.navigate(
+            val controller = parentFragment?.findNavController() ?: navController
+            controller.navigate(
                 id,
                 null,
+                buildNavOptions(inclusive)
+            )
+        }
+    }
+
+    /**
+     * Navigate using Safe Args action from child fragment to parent navigation
+     * @param action NavDirections action with type-safe arguments
+     * @param inclusive remove current fragment from backstack
+     */
+    protected fun navigateWithAction(action: NavDirections, inclusive: Boolean = false) {
+        checkIfFragmentAttached {
+            val controller = parentFragment?.findNavController() ?: navController
+            controller.navigate(
+                action,
                 buildNavOptions(inclusive)
             )
         }

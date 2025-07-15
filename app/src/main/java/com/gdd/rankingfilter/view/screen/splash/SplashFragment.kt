@@ -12,7 +12,7 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(FragmentSplashBinding
 
     override fun setUpView() {
         Handler(Looper.getMainLooper()).postDelayed({
-            navigateTo(R.id.action_splashFragment_to_homeFragment)
+            navigateTo(R.id.action_splashFragment_to_homeFragment, true)
         }, 3000)
     }
 

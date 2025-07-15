@@ -16,3 +16,4 @@ fun loadImage(view: ImageView, thumbnailUrl: String?) {
         .placeholder(Color.LTGRAY.toDrawable())
         .into(view)
 }
+

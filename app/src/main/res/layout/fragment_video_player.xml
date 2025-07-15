@@ -7,11 +7,13 @@
     tools:context=".view.screen.video_player.VideoPlayerFragment"
     android:background="@android:color/black">
 
-    <androidx.media3.ui.PlayerView
-        android:id="@+id/playerView"
+    <!-- ViewPager2 vertical như TikTok -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/videoViewPager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:show_buffering="when_playing"
-        app:use_controller="true" />
-
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </FrameLayout>
