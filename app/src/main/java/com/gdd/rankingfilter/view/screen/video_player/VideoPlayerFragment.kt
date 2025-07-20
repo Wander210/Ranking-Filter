@@ -32,7 +32,6 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>(FragmentVid
         private const val PRELOAD_DISTANCE = 2     // items ahead to preload
         private const val CLEANUP_DISTANCE = 4     // items past which to clean up
         private const val PRELOAD_DELAY = 100L     // ms before preloading
-        private const val PLAY_DELAY = 200L        // ms before playback
     }
 
     override fun initData() {

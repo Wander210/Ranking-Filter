@@ -2,6 +2,7 @@ package com.gdd.rankingfilter.data.repository
 
 import android.content.Context
 import android.util.Log
+import com.gdd.rankingfilter.data.model.Song
 import com.gdd.rankingfilter.util.ConfigManager
 import com.gdd.rankingfilter.data.model.Video
 import okhttp3.Credentials
@@ -57,11 +58,36 @@ class CloudinaryRepository(context: Context) {
     suspend fun getVideos(): List<Video> {
         return try {
             val cfg = configManager.getCloudinaryConfig() ?: return emptyList()
-            val apiResp = cloudinaryService.getVideos(cloudName = cfg.cloud_name)
+            val apiResp = cloudinaryService.getVideos(
+                cloudName = cfg.cloud_name,
+                folder = "ranking_filter_videos")
             if (apiResp.isSuccessful) apiResp.body()?.resources ?: emptyList()
             else {
-                Log.e("CloudinaryRepository",
-                    "HTTP ${apiResp.code()} ${apiResp.message()}")
+                Log.e(
+                    "CloudinaryRepository",
+                    "HTTP ${apiResp.code()} ${apiResp.message()}"
+                )
+                emptyList()
+            }
+        } catch (t: Throwable) {
+            Log.e("CloudinaryRepository", "Exception type: ${t::class.java.simpleName}")
+            Log.e("CloudinaryRepository", "Error message: ${t.message}")
+            emptyList()
+        }
+    }
+
+    suspend fun getSongs(): List<Song> {
+        return try {
+            val cfg = configManager.getCloudinaryConfig() ?: return emptyList()
+            val apiResp = cloudinaryService.getSongs(
+                cloudName = cfg.cloud_name,
+                folder = "ranking_filter_songs")
+            if (apiResp.isSuccessful) (apiResp.body()?.resources ?: emptyList())
+            else {
+                Log.e(
+                    "CloudinaryRepository2",
+                    "HTTP ${apiResp.code()} ${apiResp.message()}"
+                )
                 emptyList()
             }
         } catch (t: Throwable) {

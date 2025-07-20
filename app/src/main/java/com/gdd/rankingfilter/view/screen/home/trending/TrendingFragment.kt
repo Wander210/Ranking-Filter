@@ -1,5 +1,6 @@
 package com.gdd.rankingfilter.view.screen.home.trending
 
+import android.util.Log
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.gdd.rankingfilter.base.BaseFragment

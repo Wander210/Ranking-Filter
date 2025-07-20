@@ -43,8 +43,6 @@ import java.util.Collections
  *
  * 4. Releasing all ExoPlayer instances, cache, and preload coroutines when no longer needed
  *    via the releaseAll() method.
- *
- * This manager is designed to work within an MVVM + Single Activity + Multi-Fragment architecture.
  */
 
 class VideoPlayerManager private constructor(

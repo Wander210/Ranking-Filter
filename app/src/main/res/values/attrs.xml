@@ -1,0 +1,10 @@
+<resources>
+    <declare-styleable name="ClipSelectionView">
+        <attr name="trackColor" format="color" />
+        <attr name="clipColor" format="color" />
+        <attr name="trackHeight" format="dimension" />
+        <attr name="clipHeight" format="dimension" />
+        <attr name="clipWidth" format="dimension" />
+        <attr name="showTimeLabels" format="boolean" />
+    </declare-styleable>
+</resources>

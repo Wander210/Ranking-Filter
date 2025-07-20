@@ -18,10 +18,10 @@ class FragmentPageAdapter(
         TrendingFragment(),
         FootballFragment(),
         FoodFragment(),
-        CartoonFragment(),
         AnimeFragment(),
         IdolFragment(),
-        MakeupFragment()
+        MakeupFragment(),
+        CartoonFragment()
     )
 
     override fun getItemCount() = fragments.size

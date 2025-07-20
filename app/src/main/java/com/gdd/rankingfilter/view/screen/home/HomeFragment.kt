@@ -1,23 +1,15 @@
 package com.gdd.rankingfilter.view.screen.home
 
 import android.graphics.drawable.GradientDrawable
-import android.util.Log
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.GridLayoutManager
 import com.gdd.rankingfilter.R
 import com.gdd.rankingfilter.base.BaseFragment
 import com.gdd.rankingfilter.data.model.TabInfo
-import com.gdd.rankingfilter.data.model.Video
-import com.gdd.rankingfilter.data.repository.CloudinaryRepository
 import com.gdd.rankingfilter.databinding.FragmentHomeBinding
-import com.gdd.rankingfilter.databinding.TabCustomItemBinding
+import com.gdd.rankingfilter.databinding.ItemCustomTabBinding
 import com.gdd.rankingfilter.extention.dpToPx
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.coroutines.launch
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
@@ -42,7 +34,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
         TabLayoutMediator(tabLayout, viewPager2) { tab, position ->
             val tapInfo = tabs[position]
-            val tabView = TabCustomItemBinding.inflate(layoutInflater).apply {
+            val tabView = ItemCustomTabBinding.inflate(layoutInflater).apply {
                 tabIcon.setImageResource(tapInfo.icon)
                 tabTitle.setText(tapInfo.title)
                 val bg = GradientDrawable().apply {
@@ -77,6 +69,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
         btnSetting.setOnClickListener {
             navigateTo(R.id.action_homeFragment_to_settingFragment)
+        }
+
+        btnCamera.setOnClickListener {
+            navigateTo(R.id.action_homeFragment_to_videoEditorFragment)
         }
     }
 

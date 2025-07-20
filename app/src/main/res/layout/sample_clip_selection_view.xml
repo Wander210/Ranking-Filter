@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:padding="@dimen/_5sdp">
+
+    <!-- Background track (full song) -->
+    <View
+        android:id="@+id/fullTrackBackground"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_marginTop="3dp"
+        android:background="@drawable/bg_track"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Selected clip highlight (1 minute blue bar) -->
+    <View
+        android:id="@+id/selectedClipHighlight"
+        android:layout_width="60dp"
+        android:layout_height="6dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginStart="20dp"
+        android:background="@drawable/bg_selected_clip"
+        app:layout_constraintStart_toStartOf="@+id/fullTrackBackground"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvStartTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:text="01:30"
+        android:textColor="#000000"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/selectedClipHighlight" />
+
+    <TextView
+        android:id="@+id/tvEndTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:gravity="end"
+        android:text="03:45"
+        android:textColor="#000000"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/selectedClipHighlight" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

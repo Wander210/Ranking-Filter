@@ -3,4 +3,17 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="primary_blue">#7BD0F6</color>
+    <color name="background_gray">#F5F5F5</color>
+    <color name="track_background_color">#E0E0E0</color>
+    <color name="clip_highlight_color">#03A9F4</color>
+
+    <!-- Additional colors for theming -->
+    <color name="text_secondary">#666666</color>
+
+    <!-- Alternative color schemes -->
+    <color name="track_dark">#424242</color>
+    <color name="clip_dark">#2196F3</color>
+
+    <color name="track_light">#F0F0F0</color>
+    <color name="clip_accent">#FF5722</color>
 </resources>

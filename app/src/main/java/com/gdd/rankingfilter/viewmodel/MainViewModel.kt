@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
+import com.gdd.rankingfilter.data.model.Song
 import com.gdd.rankingfilter.data.model.Video
 import com.gdd.rankingfilter.data.repository.CloudinaryRepository
 import kotlinx.coroutines.launch
@@ -17,8 +18,12 @@ class MainViewModel(
     private val _allVideos = MutableLiveData<List<Video>>()
     val allVideos: LiveData<List<Video>> = _allVideos
 
+    private val _allSongs = MutableLiveData<List<Song>>()
+    val allSongs: LiveData<List<Song>> = _allSongs
+
     init {
         loadVideos()
+        loadSongs()
     }
 
     fun loadVideos() {
@@ -27,6 +32,16 @@ class MainViewModel(
                 _allVideos.value = repository.getVideos()
             } catch (e: Exception) {
                 Log.e("LoadVideos", "Error loading videos", e)
+            }
+        }
+    }
+
+    fun loadSongs() {
+        viewModelScope.launch {
+            try {
+                _allSongs.value = repository.getSongs()
+            } catch (e: Exception) {
+                Log.e("LoadSongs", "Error loading songs", e)
             }
         }
     }
