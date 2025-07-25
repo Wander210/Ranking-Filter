@@ -13,7 +13,11 @@
     <!-- Alternative color schemes -->
     <color name="track_dark">#424242</color>
     <color name="clip_dark">#2196F3</color>
-
+    <color name="background_green_dark">#558C60</color>
     <color name="track_light">#F0F0F0</color>
     <color name="clip_accent">#FF5722</color>
+    <color name="light_blue_400">#FF29B6F6</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="gray_400">#FFBDBDBD</color>
+    <color name="gray_600">#FF757575</color>
 </resources>

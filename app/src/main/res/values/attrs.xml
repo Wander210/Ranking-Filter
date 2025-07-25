@@ -7,4 +7,17 @@
         <attr name="clipWidth" format="dimension" />
         <attr name="showTimeLabels" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="ListRankingFilterView">
+        <attr name="itemCount" format="integer" />
+        <attr name="itemSize" format="dimension" />
+        <attr name="itemSpacing" format="dimension" />
+        <attr name="itemColor" format="color" />
+        <attr name="textColor" format="color" />
+    </declare-styleable>
+
+
+    <declare-styleable name="BracketTournamentView">
+
+    </declare-styleable>
 </resources>

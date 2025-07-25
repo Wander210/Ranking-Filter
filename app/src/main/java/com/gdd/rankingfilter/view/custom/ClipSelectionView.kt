@@ -6,11 +6,11 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.gdd.rankingfilter.R
+import com.gdd.rankingfilter.databinding.SampleClipSelectionViewBinding
 import kotlin.math.max
 import kotlin.math.min
 
@@ -20,42 +20,27 @@ class ClipSelectionView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    private var fullTrackBackground: View
-    private var selectedClipHighlight: View
-    private var tvStartTime: TextView
-    private var tvEndTime: TextView
+    private val binding : SampleClipSelectionViewBinding
 
-    // Properties
     private var songDurationMs: Long = 0L
     private var currentTimeMs: Long = 0L
     private val clipDurationMs = 60000L // 1 minute
     private var trackWidth = 0
 
-    // Touch handling
     private var isDragging = false
     private var lastTouchX = 0f
 
-    // Callbacks
     var onSeekTo: ((timeMs: Long) -> Unit)? = null
 
     init {
-        // Inflate layout
-        LayoutInflater.from(context).inflate(R.layout.sample_clip_selection_view, this, true)
-
-        // Find views
-        fullTrackBackground = findViewById(R.id.fullTrackBackground)
-        selectedClipHighlight = findViewById(R.id.selectedClipHighlight)
-        tvStartTime = findViewById(R.id.tvStartTime)
-        tvEndTime = findViewById(R.id.tvEndTime)
-
+        binding = SampleClipSelectionViewBinding.inflate(LayoutInflater.from(context), this, true)
         // Setup layout observation
         setupLayoutObserver()
-
         // Setup touch handling
         setupTouchHandling()
     }
 
-    private fun setupLayoutObserver() {
+    private fun setupLayoutObserver() = with(binding) {
         fullTrackBackground.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 trackWidth = fullTrackBackground.width
@@ -68,7 +53,7 @@ class ClipSelectionView @JvmOverloads constructor(
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun setupTouchHandling() {
+    private fun setupTouchHandling() = with(binding) {
         selectedClipHighlight.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
@@ -79,21 +64,19 @@ class ClipSelectionView @JvmOverloads constructor(
                 }
 
                 MotionEvent.ACTION_MOVE -> {
-                    if (isDragging && trackWidth > 0 && songDurationMs > 0) {
+                    if (isDragging && songDurationMs > 0) {
                         val deltaX = event.rawX - lastTouchX
+                        val currentMarginStart = (selectedClipHighlight.layoutParams as MarginLayoutParams).marginStart
+                        val maxPosition = trackWidth - selectedClipHighlight.width
+                        val maxSeekTime = songDurationMs - clipDurationMs
 
                         // Calculate new position
-                        val currentMarginStart = (selectedClipHighlight.layoutParams as MarginLayoutParams).marginStart
-                        val clipWidth = selectedClipHighlight.width
-                        val maxPosition = trackWidth - clipWidth
                         val newPosition = (currentMarginStart + deltaX).toInt().coerceIn(0, maxPosition)
-
                         // Calculate corresponding time
                         val timeRatio = newPosition.toFloat() / maxPosition
-                        val maxSeekTime = songDurationMs - clipDurationMs
                         val newTimeMs = (timeRatio * maxSeekTime).toLong().coerceAtLeast(0L)
 
-                        // Update position and notify
+                        // Update position and ui
                         currentTimeMs = newTimeMs
                         updateClipPosition()
                         updateTimeLabels()
@@ -128,10 +111,30 @@ class ClipSelectionView @JvmOverloads constructor(
                     onSeekTo?.invoke(newTimeMs)
                 }
                 true
-            } else {
-                false
-            }
+            } else false
         }
+    }
+
+    private fun updateClipPosition() = with(binding) {
+        if (trackWidth <= 0 || songDurationMs <= 0) return
+
+        // Calculate clip width based on 1 minute duration
+        val clipWidthRatio = clipDurationMs.toFloat() / songDurationMs
+        val clipWidth = (clipWidthRatio * trackWidth).toInt()
+
+        // Calculate clip position based on current time
+        val currentTimeRatio = currentTimeMs.toFloat() / songDurationMs
+        val maxClipStart = trackWidth - clipWidth
+        val clipStart = (currentTimeRatio * trackWidth).toInt()
+        val adjustedClipStart = min(clipStart, maxClipStart)
+
+        // Update selectedClipHighlight position and width
+        selectedClipHighlight.layoutParams =
+            (selectedClipHighlight.layoutParams as MarginLayoutParams).apply {
+                marginStart = adjustedClipStart
+                width = max(clipWidth, 1) // Minimum width 1px
+            }
+        selectedClipHighlight.requestLayout()
     }
 
     fun setSongDuration(durationMs: Long) {
@@ -148,35 +151,8 @@ class ClipSelectionView @JvmOverloads constructor(
         }
     }
 
-    private fun updateClipPosition() {
-        if (trackWidth <= 0 || songDurationMs <= 0) return
-
-        // Calculate clip width based on 1 minute duration
-        val clipWidthRatio = clipDurationMs.toFloat() / songDurationMs
-        val clipWidthPx = (clipWidthRatio * trackWidth).toInt()
-
-        // Calculate clip position based on current time
-        val currentTimeRatio = currentTimeMs.toFloat() / songDurationMs
-        val maxStartPosition = trackWidth - clipWidthPx
-        val clipStartPx = (currentTimeRatio * trackWidth).toInt()
-
-        // Stop moving when endMs reaches end of track
-        val adjustedClipStartPx = min(clipStartPx, maxStartPosition)
-
-        // Update selectedClipHighlight position and width
-        selectedClipHighlight.layoutParams =
-            (selectedClipHighlight.layoutParams as MarginLayoutParams).apply {
-                marginStart = adjustedClipStartPx
-                width = max(clipWidthPx, 1) // Minimum width 1px
-            }
-        selectedClipHighlight.requestLayout()
-    }
-
-    private fun updateTimeLabels() {
-        // startMs = current time (moves with music)
+    private fun updateTimeLabels() = with(binding) {
         tvStartTime.text = formatDuration(currentTimeMs)
-
-        // endMs = total song duration (fixed, cached)
         tvEndTime.text = formatDuration(songDurationMs)
     }
 

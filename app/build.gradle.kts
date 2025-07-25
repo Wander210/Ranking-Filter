@@ -51,9 +51,9 @@ dependencies {
     implementation("com.intuit.ssp:ssp-android:1.1.1")
     implementation("com.intuit.sdp:sdp-android:1.1.1")
     //Navigation
-    val version = "2.9.0"
-    implementation("androidx.navigation:navigation-fragment:$version")
-    implementation("androidx.navigation:navigation-ui:$version")
+    val navigation_version = "2.9.0"
+    implementation("androidx.navigation:navigation-fragment:$navigation_version")
+    implementation("androidx.navigation:navigation-ui:$navigation_version")
     // DI
     implementation("com.google.dagger:hilt-android:2.56.2")
     kapt("com.google.dagger:hilt-android-compiler:2.56.2")
@@ -82,6 +82,13 @@ dependencies {
     // ViewModel + LiveData
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.9.1")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.1")
+
+    val camerax_version = "1.4.2"
+    implementation ("androidx.camera:camera-core:$camerax_version")
+    implementation ("androidx.camera:camera-camera2:$camerax_version")
+    implementation ("androidx.camera:camera-lifecycle:$camerax_version")
+    implementation ("androidx.camera:camera-video:$camerax_version")
+    implementation ("androidx.camera:camera-view:$camerax_version")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

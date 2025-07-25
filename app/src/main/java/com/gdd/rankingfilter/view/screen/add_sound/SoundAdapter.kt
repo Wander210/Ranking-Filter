@@ -43,21 +43,16 @@ class SoundAdapter : RecyclerView.Adapter<SoundAdapter.SoundViewHolder>() {
         val oldPosition = currentPosition
         currentPosition = position
 
-        // Stop current audio
         stopCurrentAudio()
 
         // Update selection state
-        songList.getOrNull(oldPosition)?.isSelected = false
-        songList.getOrNull(position)?.isSelected = true
+        songList[oldPosition].isSelected = false
+        songList[position].isSelected = true
 
-        // Set auto-play flag for new selection
         shouldAutoPlay = true
 
-        // Notify UI changes
         notifyItemChanged(oldPosition)
         notifyItemChanged(position)
-
-        Log.d(TAG, "Position updated: $oldPosition -> $position, will auto-play")
     }
 
     private fun post(action: () -> Unit) {
@@ -86,7 +81,7 @@ class SoundAdapter : RecyclerView.Adapter<SoundAdapter.SoundViewHolder>() {
 
         isLoadingAudio = false
         isActuallyPlaying = false
-        shouldAutoPlay = false // Clear auto-play flag
+        shouldAutoPlay = false
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SoundViewHolder {
@@ -110,21 +105,13 @@ class SoundAdapter : RecyclerView.Adapter<SoundAdapter.SoundViewHolder>() {
 
         fun bind(item: Song, position: Int) = with(binding) {
             currentItemPosition = position
-            val isCurrentlySelected = (currentPlayingPosition == position)
-            val isCurrentlyPlaying = (isCurrentlySelected && isActuallyPlaying)
-            val isSelected = item.isSelected
-            val isCurrentlyLoading = (isLoadingAudio && isSelected)
-
-            Log.d(TAG, "=== Binding item $position (${item.public_id}) ===")
-            Log.d(TAG, "isSelected=$isSelected, isCurrentlySelected=$isCurrentlySelected, isCurrentlyPlaying=$isCurrentlyPlaying")
-            Log.d(TAG, "shouldAutoPlay=$shouldAutoPlay, isLoadingAudio=$isLoadingAudio")
 
             // Update UI based on selection state
             tvTitle.setTextColor(
-                if (isSelected) "#FFFFFFFF".toColorInt() else "#FF000000".toColorInt()
+                if (item.isSelected) "#FFFFFFFF".toColorInt() else "#FF000000".toColorInt()
             )
             lSongTitle.setBackgroundColor(
-                if (isSelected) "#FF03A9F4".toColorInt() else "#FFFFFFFF".toColorInt()
+                if (item.isSelected) "#FF03A9F4".toColorInt() else "#FFFFFFFF".toColorInt()
             )
 
             if (item.public_id != "") {
@@ -133,10 +120,10 @@ class SoundAdapter : RecyclerView.Adapter<SoundAdapter.SoundViewHolder>() {
                 btnPlay.visibility = android.view.View.VISIBLE
 
                 // Show clip selection only for selected items
-                clipSelectionView.visibility = if(isSelected) android.view.View.VISIBLE else android.view.View.GONE
+                clipSelectionView.visibility = if(item.isSelected) android.view.View.VISIBLE else android.view.View.GONE
 
                 // Update play button icon and state
-                updatePlayButton(isCurrentlyPlaying, !isCurrentlyLoading)
+                updatePlayButton(currentPlayingPosition == position && isActuallyPlaying, !(isLoadingAudio && item.isSelected))
 
                 // Play button logic - only enabled when not loading
                 btnPlay.setOnClickListener {
@@ -161,7 +148,7 @@ class SoundAdapter : RecyclerView.Adapter<SoundAdapter.SoundViewHolder>() {
                 }
 
                 // Setup custom clip view
-                if (isSelected) {
+                if (item.isSelected) {
                     setupClipView(item)
 
                     // Auto-play ONLY if shouldAutoPlay flag is set (new selection)
@@ -211,7 +198,6 @@ class SoundAdapter : RecyclerView.Adapter<SoundAdapter.SoundViewHolder>() {
 
             // Handle seek events from custom view
             clipSelectionView.onSeekTo = { timeMs ->
-                Log.d(TAG, "Seek to: ${formatDuration(timeMs)}")
                 currentTimeMs = timeMs
 
                 // If currently playing, seek the MediaPlayer
@@ -271,8 +257,6 @@ class SoundAdapter : RecyclerView.Adapter<SoundAdapter.SoundViewHolder>() {
 
                         // Start progress monitoring
                         startProgressMonitoring(mp)
-
-                        Log.d(TAG, "Now playing: ${song.public_id}, duration: ${formatDuration(songDurationMs)}")
                     }
 
                     setOnErrorListener { _, what, extra ->
@@ -377,16 +361,6 @@ class SoundAdapter : RecyclerView.Adapter<SoundAdapter.SoundViewHolder>() {
             )
             binding.btnPlay.isEnabled = enabled
             binding.btnPlay.alpha = if (enabled) 1.0f else 0.5f // Visual feedback for disabled state
-
-            Log.d(TAG, "Play button updated: playing=$playing, enabled=$enabled")
-        }
-
-        @SuppressLint("DefaultLocale")
-        fun formatDuration(durationMillis: Long): String {
-            val totalSeconds = durationMillis / 1000
-            val minutes = totalSeconds / 60
-            val seconds = totalSeconds % 60
-            return String.format("%02d:%02d", minutes, seconds)
         }
     }
 }

@@ -1,8 +1,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     tools:context=".view.screen.video_editor.VideoEditorFragment">
 
     <androidx.cardview.widget.CardView
@@ -13,54 +13,252 @@
         android:layout_marginEnd="@dimen/_20sdp"
         app:cardBackgroundColor="#803C3C3C"
         app:cardCornerRadius="@dimen/_10sdp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Nhờ CardView là FrameLayout nên phải thêm ConstraintLayout con để dùng constraint -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingVertical="@dimen/_4sdp"
-            android:paddingHorizontal="@dimen/_6sdp">
+            android:paddingHorizontal="@dimen/_6sdp"
+            android:paddingVertical="@dimen/_4sdp">
 
             <ImageView
                 android:id="@+id/imgMusicNote"
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="@dimen/_20sdp"
                 android:contentDescription="@null"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/ic_music_note_white"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:src="@drawable/ic_music_note_white"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tvAddSound"
-                android:ellipsize="marquee"
-                android:marqueeRepeatLimit="marquee_forever"
                 android:layout_width="@dimen/_90sdp"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@id/imgMusicNote"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_marginStart="@dimen/_5sdp"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
                 android:text="@string/add_sound"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_12ssp"/>
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imgMusicNote"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/imgCancel"
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="@dimen/_20sdp"
-                android:contentDescription="@null"
                 android:layout_marginStart="@dimen/_10sdp"
-                app:layout_constraintStart_toEndOf="@+id/tvAddSound"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_pipe_x"
                 android:visibility="visible"
-                android:src="@drawable/ic_pipe_x"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tvAddSound"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/viewFinder"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Switch Camera Button -->
+    <View
+        android:id="@+id/cSwitchCamera"
+        android:layout_width="@dimen/_48sdp"
+        android:layout_height="@dimen/_48sdp"
+        android:layout_marginEnd="@dimen/_15sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:background="@drawable/bg_circle_button"
+        app:layout_constraintBottom_toTopOf="@id/cClock"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/btnSwitchCamera"
+        android:layout_width="@dimen/_28sdp"
+        android:layout_height="@dimen/_28sdp"
+        android:layout_margin="@dimen/_10sdp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_reload"
+        app:layout_constraintBottom_toBottomOf="@+id/cSwitchCamera"
+        app:layout_constraintEnd_toEndOf="@+id/cSwitchCamera"
+        app:layout_constraintStart_toStartOf="@+id/cSwitchCamera"
+        app:layout_constraintTop_toTopOf="@+id/cSwitchCamera" />
+
+    <View
+        android:id="@+id/cClock"
+        android:layout_width="@dimen/_48sdp"
+        android:layout_height="@dimen/_48sdp"
+        android:layout_marginEnd="@dimen/_15sdp"
+        android:background="@drawable/bg_circle_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/btnClock"
+        android:layout_width="@dimen/_28sdp"
+        android:layout_height="@dimen/_28sdp"
+        android:layout_margin="@dimen/_10sdp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_clock"
+        app:layout_constraintBottom_toBottomOf="@+id/cClock"
+        app:layout_constraintEnd_toEndOf="@+id/cClock"
+        app:layout_constraintStart_toStartOf="@+id/cClock"
+        app:layout_constraintTop_toTopOf="@+id/cClock" />
+
+    <View
+        android:id="@+id/cFilter"
+        android:layout_width="@dimen/_48sdp"
+        android:layout_height="@dimen/_48sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_15sdp"
+        android:background="@drawable/bg_circle_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cClock" />
+
+    <ImageView
+        android:id="@+id/btnFilter"
+        android:layout_width="@dimen/_28sdp"
+        android:layout_height="@dimen/_28sdp"
+        android:layout_margin="@dimen/_10sdp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_paint_brush"
+        app:layout_constraintBottom_toBottomOf="@+id/cFilter"
+        app:layout_constraintEnd_toEndOf="@+id/cFilter"
+        app:layout_constraintStart_toStartOf="@+id/cFilter"
+        app:layout_constraintTop_toTopOf="@+id/cFilter" />
+
+    <!-- Delay Buttons Container -->
+
+
+    <ImageView
+        android:id="@+id/btn2s"
+        android:layout_width="@dimen/_55sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:background="@drawable/bg_delay_button"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toTopOf="@id/btnRecord"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_18pt_semibold"
+        android:text="2s"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_18ssp"
+        app:layout_constraintBottom_toBottomOf="@id/btn2s"
+        app:layout_constraintEnd_toEndOf="@id/btn2s"
+        app:layout_constraintStart_toStartOf="@id/btn2s"
+        app:layout_constraintTop_toTopOf="@id/btn2s" />
+
+    <ImageView
+        android:id="@+id/btn1s"
+        android:layout_width="@dimen/_55sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:background="@drawable/bg_delay_button"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toTopOf="@+id/btnRecord"
+        app:layout_constraintEnd_toStartOf="@id/btn2s" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_18pt_semibold"
+        android:text="1s"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_18ssp"
+        app:layout_constraintBottom_toBottomOf="@id/btn1s"
+        app:layout_constraintEnd_toEndOf="@id/btn1s"
+        app:layout_constraintStart_toStartOf="@id/btn1s"
+        app:layout_constraintTop_toTopOf="@id/btn1s" />
+
+    <ImageView
+        android:id="@+id/btn3s"
+        android:layout_width="@dimen/_55sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:background="@drawable/bg_delay_button"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toTopOf="@id/btnRecord"
+        app:layout_constraintStart_toEndOf="@id/btn2s" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_18pt_semibold"
+        android:text="3s"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_18ssp"
+        app:layout_constraintBottom_toBottomOf="@id/btn3s"
+        app:layout_constraintEnd_toEndOf="@id/btn3s"
+        app:layout_constraintStart_toStartOf="@id/btn3s"
+        app:layout_constraintTop_toTopOf="@id/btn3s" />
+
+    <!-- Countdown Text -->
+    <TextView
+        android:id="@+id/countdown_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="3"
+        android:textColor="@android:color/white"
+        android:textSize="120sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/btnRecord"
+        android:layout_width="@dimen/_70sdp"
+        android:layout_height="@dimen/_70sdp"
+        android:layout_marginBottom="@dimen/_40sdp"
+        android:background="@drawable/bg_record_button"
+        android:textColor="@android:color/white"
+        android:textSize="32sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.gdd.rankingfilter.view.custom.ListRankingFilterView
+        style="@style/Widget.Theme.RankingFilter.MyView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:paddingBottom="@dimen/_40sdp"
+        app:itemCount="10"
+        app:itemSize="@dimen/_30sdp"
+        app:itemSpacing="@dimen/_5sdp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"/>
+
+   <com.gdd.rankingfilter.view.custom.BracketRankingFilterView
+       android:id="@+id/bracketView"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:padding="@dimen/_10sdp"
+       android:layout_marginBottom="@dimen/_100sdp"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
