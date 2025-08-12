@@ -73,10 +73,12 @@ dependencies {
     // Gson
     implementation ("com.google.code.gson:gson:2.13.1")
     // Media3
-    implementation("androidx.media3:media3-exoplayer:1.6.0")
-    implementation("androidx.media3:media3-ui:1.6.0")
-    implementation("androidx.media3:media3-database:1.6.0")
-    implementation("androidx.media3:media3-datasource:1.6.0")
+    val media3_version = "1.8.0"
+    implementation("androidx.media3:media3-exoplayer:$media3_version")
+    implementation("androidx.media3:media3-ui:$media3_version")
+    implementation("androidx.media3:media3-database:$media3_version")
+    implementation("androidx.media3:media3-datasource:$media3_version")
+    implementation("androidx.media3:media3-effect:$media3_version")
     // Glide
     implementation("com.github.bumptech.glide:glide:4.16.0")
     // ViewModel + LiveData

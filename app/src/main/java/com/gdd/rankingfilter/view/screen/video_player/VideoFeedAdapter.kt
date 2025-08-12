@@ -4,8 +4,7 @@ import android.annotation.SuppressLint
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.gdd.rankingfilter.data.model.Video
-import com.gdd.rankingfilter.util.VideoPlayerManager
-import android.util.Log
+import com.gdd.rankingfilter.utils.VideoPlayerManager
 
 class VideoFeedAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
     private var videos: List<Video> = emptyList()

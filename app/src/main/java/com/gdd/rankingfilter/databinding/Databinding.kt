@@ -17,3 +17,12 @@ fun loadImage(view: ImageView, thumbnailUrl: String?) {
         .into(view)
 }
 
+@BindingAdapter("bind:coverUrl")
+fun loadCover(view: ImageView, coverUrl: String?) {
+    Glide.with(view.context)
+        .load(coverUrl)
+        .circleCrop()
+        .placeholder(Color.LTGRAY.toDrawable())
+        .into(view)
+}
+

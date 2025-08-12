@@ -11,7 +11,7 @@ import com.gdd.rankingfilter.base.BaseFragment
 import com.gdd.rankingfilter.data.model.Video
 import com.gdd.rankingfilter.data.repository.CloudinaryRepository
 import com.gdd.rankingfilter.databinding.FragmentVideoPlayerBinding
-import com.gdd.rankingfilter.util.VideoPlayerManager
+import com.gdd.rankingfilter.utils.VideoPlayerManager
 import com.gdd.rankingfilter.viewmodel.MainViewModel
 import com.gdd.rankingfilter.viewmodel.MainViewModelFactory
 

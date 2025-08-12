@@ -3,10 +3,6 @@ package com.gdd.rankingfilter.data.model
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
-data class VideoResponse(
-    val resources: List<Video>
-)
-
 @Parcelize
 data class Video(
     val public_id: String,

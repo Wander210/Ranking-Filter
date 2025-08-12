@@ -3,9 +3,13 @@ package com.gdd.rankingfilter.view.screen.video_editor
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.CountDownTimer
+import android.provider.MediaStore
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -17,9 +21,18 @@ import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
 import androidx.camera.video.VideoRecordEvent
 import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker
+import androidx.fragment.app.activityViewModels
 import com.gdd.rankingfilter.R
 import com.gdd.rankingfilter.base.BaseFragment
+import com.gdd.rankingfilter.data.model.RankingItem
+import com.gdd.rankingfilter.data.repository.CloudinaryRepository
 import com.gdd.rankingfilter.databinding.FragmentVideoEditorBinding
+import com.gdd.rankingfilter.view.custom.BracketRankingFilterView
+import com.gdd.rankingfilter.view.custom.ListRankingFilterView
+import com.gdd.rankingfilter.view.custom.circular_spinner.CircularSpinnerView
+import com.gdd.rankingfilter.viewmodel.MainViewModel
+import com.gdd.rankingfilter.viewmodel.MainViewModelFactory
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.ExecutorService
@@ -32,34 +45,62 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
     private lateinit var cameraExecutor: ExecutorService
     private var cameraProvider: ProcessCameraProvider? = null
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
-    private var currentDelayTime = 0
-    private var countDownTimer: CountDownTimer? = null
+    private var delayingTime = 0
+    private var recordingTime = 0
+    private var recordingTimer: CountDownTimer? = null
+    private var delayTimer: CountDownTimer? = null
     private var isRecording = false
 
+    private lateinit var rankingItemList: List<RankingItem>
+    private lateinit var circularSpinner: CircularSpinnerView
+    private lateinit var listView: ListRankingFilterView
+    private lateinit var bracketView: BracketRankingFilterView
+    private val viewModel: MainViewModel by activityViewModels {
+        MainViewModelFactory(CloudinaryRepository(requireContext()))
+    }
+
     companion object {
-        private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(
             Manifest.permission.CAMERA,
             Manifest.permission.RECORD_AUDIO
         )
     }
 
-    override fun initData() {
+    override fun initData() = with(binding) {
+        // Check and request camera permissions
+        if (allPermissionsGranted()) initializeCamera()
+        else permissionLauncher.launch(REQUIRED_PERMISSIONS)
+
         // Initialize camera executor
         cameraExecutor = Executors.newSingleThreadExecutor()
+        viewModel.allRankingItems.observe(viewLifecycleOwner) { list ->
+            rankingItemList = list
+            var coverUrlList = mutableListOf<String>()
+            list.forEach { it -> coverUrlList.add(it.coverUrl) }
+            circularSpinner.setItems(coverUrlList)
+
+            // Initialize the first item
+            try {
+                val firstItem = list[0]
+                if (firstItem.type == "list") {
+                    listView.visibility = View.VISIBLE
+                    bracketView.visibility = View.GONE
+                    listRankingFilterView.setProfileData(firstItem)
+                } else {
+                    listView.visibility = View.GONE
+                    bracketView.visibility = View.VISIBLE
+                }
+            } catch (_ : Exception) { }
+        }
     }
 
-    override fun setUpView() {
-        // Check permissions first
-        if (allPermissionsGranted()) {
-            initializeCamera()
-        } else {
-            requestCameraPermissions()
-        }
+    override fun setUpView() = with(binding) {
+        listView = listRankingFilterView
+        bracketView = bracketRankingFilterView
+        circularSpinner = circularSpinnerView
 
-        // Setup UI elements
-        setupDelayButtons()
         resetDelayButtons()
+        resetRecordButtons()
     }
 
     override fun setUpListener() = with(binding) {
@@ -68,43 +109,49 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
             navigateTo(R.id.action_videoEditorFragment_to_addSoundFragment)
         }
 
-        // Camera controls
-        btnSwitchCamera.setOnClickListener {
-            switchCamera()
-        }
+        btnSwitchCamera.setOnClickListener { switchCamera() }
+        btnClock.setOnClickListener { lDelay.visibility = View.VISIBLE }
 
-        btnRecord.setOnClickListener {
-            handleRecordButtonClick()
-        }
+        btnRecord.setOnClickListener { handleRecordButtonClick() }
 
         // Delay buttons
-        btn1s.setOnClickListener { selectDelayTime(1, btn1s) }
-        btn2s.setOnClickListener { selectDelayTime(2, btn2s) }
-        btn3s.setOnClickListener { selectDelayTime(3, btn3s) }
+        btn0s.setOnClickListener { selectDelayTime(0, btn0s, tv0s) }
+        btn3s.setOnClickListener { resetDelayButtons() }
+        btn5s.setOnClickListener { selectDelayTime(5, btn5s, tv5s) }
+        btn10s.setOnClickListener { selectDelayTime(10, btn10s, tv10s) }
+        btn15s.setOnClickListener { selectDelayTime(15, btn15s, tv15s) }
+        
+        //record time button
+        btn30s.setOnClickListener {  selectRecordTime(30, btn30s, tv30s) }
+        btn1m.setOnClickListener { selectRecordTime(60, btn1m, tv1m) }
+        btn2m.setOnClickListener { selectRecordTime(120, btn2m, tv2m) }
+
+        circularSpinner.onItemSelectedListener = { position ->
+            if (!isRecording && ::rankingItemList.isInitialized && position < rankingItemList.size) {
+                try {
+                    val item = rankingItemList[position]
+                    if(item.type == "list") {
+                        listView.visibility = View.VISIBLE
+                        bracketView.visibility = View.GONE
+                        listRankingFilterView.setProfileData(item)
+                    } else {
+                        listView.visibility = View.GONE
+                        bracketView.visibility = View.VISIBLE
+                    }
+                } catch (_: Exception) { }
+            }
+        }
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun requestCameraPermissions() {
-        requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
-                initializeCamera()
-                showToast("Permissions granted, initializing camera...")
-            } else {
-                showToast("Camera và audio permissions cần thiết để sử dụng tính năng này")
-            }
+    private val permissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { perms ->
+        if (perms.values.all { it }) {
+            initializeCamera()
         }
     }
 
@@ -138,7 +185,7 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
             val preview = Preview.Builder()
                 .build()
                 .also {
-                    it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
+                    it.surfaceProvider = binding.viewFinder.surfaceProvider
                 }
 
             // Setup video capture
@@ -166,59 +213,72 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
         }
     }
 
-    private fun setupDelayButtons() {
-        // Set initial background for delay buttons
-        val grayColor = ContextCompat.getColor(requireContext(), android.R.color.darker_gray)
+    private fun resetDelayButtons() = with(binding) {
+        btn0s.setBackgroundResource(R.drawable.bg_black)
+        btn3s.setBackgroundResource(R.drawable.bg_white)
+        btn5s.setBackgroundResource(R.drawable.bg_black)
+        btn10s.setBackgroundResource(R.drawable.bg_black)
+        btn15s.setBackgroundResource(R.drawable.bg_black)
 
-        binding.apply {
-            btn1s.setBackgroundColor(grayColor)
-            btn2s.setBackgroundColor(grayColor)
-            btn3s.setBackgroundColor(grayColor)
-        }
+        tv0s.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        tv3s.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+        tv5s.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        tv10s.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        tv15s.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+
+        delayingTime = 3
+        lDelay.visibility = View.GONE
     }
 
-    private fun resetDelayButtons() {
-        val grayColor = ContextCompat.getColor(requireContext(), android.R.color.darker_gray)
+    private fun resetRecordButtons() = with(binding) {
+        btn30s.setBackgroundResource(R.drawable.bg_dark_grey)
+        btn1m.setBackgroundResource(R.drawable.bg_dark_grey)
+        btn2m.setBackgroundResource(R.drawable.bg_dark_grey)
 
-        binding.apply {
-            btn1s.setBackgroundColor(grayColor)
-            btn2s.setBackgroundColor(grayColor)
-            btn3s.setBackgroundColor(grayColor)
-        }
+        tv30s.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        tv1m.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        tv2m.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
 
-        currentDelayTime = 0
+        recordingTime = 0
     }
 
-    private fun selectDelayTime(seconds: Int, selectedButton: View) {
-        // Reset all buttons to gray
+    private fun selectDelayTime(seconds: Int, selectedButton: View, selectedTextView : TextView) {
         resetDelayButtons()
-
+        //Reset btn3s
+        binding.btn3s.setBackgroundResource(R.drawable.bg_black)
+        binding.tv3s.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         // Set selected button to white
-        val whiteColor = ContextCompat.getColor(requireContext(), android.R.color.white)
-        selectedButton.setBackgroundColor(whiteColor)
+        selectedButton.setBackgroundResource(R.drawable.bg_white)
+        selectedTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
 
-        currentDelayTime = seconds
-        showToast("Delay set to ${seconds}s")
+        delayingTime = seconds
+    }
+
+    private fun selectRecordTime(seconds: Int, selectedButton: View, selectedTextView : TextView) {
+        resetRecordButtons()
+        // Set selected button to white
+        selectedButton.setBackgroundResource(R.drawable.bg_white)
+        selectedTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+        recordingTime = seconds
     }
 
     private fun handleRecordButtonClick() {
-        if (isRecording) {
-            stopVideoRecording()
-        } else {
-            if (currentDelayTime > 0) {
-                startCountdownAndRecord()
-            } else {
+        if (isRecording) stopVideoRecording()
+        else {
+            if (delayingTime > 0) startCountdownAndDelay()
+            else {
+                if(recordingTime > 0) startCountdownAndRecord()
                 startVideoRecording()
             }
         }
     }
 
-    private fun startCountdownAndRecord() {
+    private fun startCountdownAndDelay() {
         // Disable record button during countdown
         binding.btnRecord.isEnabled = false
         binding.countdownText.visibility = View.VISIBLE
 
-        countDownTimer = object : CountDownTimer((currentDelayTime * 1000).toLong(), 1000) {
+        delayTimer = object : CountDownTimer((delayingTime * 1000).toLong(), 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val secondsLeft = (millisUntilFinished / 1000).toInt()
                 binding.countdownText.text = secondsLeft.toString()
@@ -227,8 +287,17 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
             override fun onFinish() {
                 binding.countdownText.visibility = View.GONE
                 binding.btnRecord.isEnabled = true
+                if(recordingTime > 0) startCountdownAndRecord()
                 startVideoRecording()
             }
+        }.start()
+    }
+
+    private fun startCountdownAndRecord() {
+        recordingTimer = object : CountDownTimer((recordingTime * 1000).toLong(), 1000) {
+            override fun onTick(millisUntilFinished: Long) {}
+
+            override fun onFinish() { stopVideoRecording() }
         }.start()
     }
 
@@ -253,15 +322,18 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
         val name = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS", Locale.US)
             .format(System.currentTimeMillis())
         val contentValues = android.content.ContentValues().apply {
-            put(android.provider.MediaStore.MediaColumns.DISPLAY_NAME, name)
-            put(android.provider.MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
-            put(android.provider.MediaStore.Video.Media.RELATIVE_PATH, "Movies/VideoEditor")
+            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+            put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+                put(MediaStore.Video.Media.RELATIVE_PATH, "Movies/RankingFilter")
+            }
+
         }
 
         val mediaStoreOutputOptions = MediaStoreOutputOptions
             .Builder(
                 requireActivity().contentResolver,
-                android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                MediaStore.Video.Media.EXTERNAL_CONTENT_URI
             )
             .setContentValues(contentValues)
             .build()
@@ -270,11 +342,10 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
         recording = videoCapture.output
             .prepareRecording(requireActivity(), mediaStoreOutputOptions)
             .apply {
-                if (ContextCompat.checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.RECORD_AUDIO
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
+                if (PermissionChecker.checkSelfPermission(requireContext(),
+                        Manifest.permission.RECORD_AUDIO) ==
+                    PermissionChecker.PERMISSION_GRANTED)
+                {
                     withAudioEnabled()
                 }
             }
@@ -323,11 +394,10 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
     }
 
     private fun switchCamera() {
-        lensFacing = if (lensFacing == CameraSelector.LENS_FACING_FRONT) {
+        lensFacing = if (lensFacing == CameraSelector.LENS_FACING_FRONT)
             CameraSelector.LENS_FACING_BACK
-        } else {
+        else
             CameraSelector.LENS_FACING_FRONT
-        }
 
         // Rebind camera with new lens facing
         bindCameraUseCases()
@@ -338,11 +408,20 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        // Stop recording if active
+        if (isRecording) { stopVideoRecording() }
+        // Cancel countdown
+        delayTimer?.cancel()
+        binding.countdownText.visibility = View.GONE
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-
         // Clean up resources
-        countDownTimer?.cancel()
+        delayTimer?.cancel()
         recording?.close()
         cameraExecutor.shutdown()
 
@@ -351,18 +430,5 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-        // Stop recording if active
-        if (isRecording) {
-            stopVideoRecording()
-        }
-
-        // Cancel countdown
-        countDownTimer?.cancel()
-        binding.countdownText.visibility = View.GONE
     }
 }

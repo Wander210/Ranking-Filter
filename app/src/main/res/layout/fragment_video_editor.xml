@@ -34,7 +34,7 @@
 
             <TextView
                 android:id="@+id/tvAddSound"
-                android:layout_width="@dimen/_90sdp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_5sdp"
                 android:ellipsize="marquee"
@@ -47,7 +47,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/imgCancel"
+                android:id="@+id/btnCancel"
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="@dimen/_20sdp"
                 android:layout_marginStart="@dimen/_10sdp"
@@ -74,8 +74,8 @@
     <!-- Switch Camera Button -->
     <View
         android:id="@+id/cSwitchCamera"
-        android:layout_width="@dimen/_48sdp"
-        android:layout_height="@dimen/_48sdp"
+        android:layout_width="@dimen/_32sdp"
+        android:layout_height="@dimen/_32sdp"
         android:layout_marginEnd="@dimen/_15sdp"
         android:layout_marginBottom="@dimen/_10sdp"
         android:background="@drawable/bg_circle_button"
@@ -84,11 +84,13 @@
 
     <ImageView
         android:id="@+id/btnSwitchCamera"
-        android:layout_width="@dimen/_28sdp"
-        android:layout_height="@dimen/_28sdp"
+        android:layout_width="@dimen/_18sdp"
+        android:layout_height="@dimen/_18sdp"
         android:layout_margin="@dimen/_10sdp"
         android:contentDescription="@null"
         android:src="@drawable/ic_reload"
+        android:focusable="true"
+        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="@+id/cSwitchCamera"
         app:layout_constraintEnd_toEndOf="@+id/cSwitchCamera"
         app:layout_constraintStart_toStartOf="@+id/cSwitchCamera"
@@ -96,8 +98,8 @@
 
     <View
         android:id="@+id/cClock"
-        android:layout_width="@dimen/_48sdp"
-        android:layout_height="@dimen/_48sdp"
+        android:layout_width="@dimen/_32sdp"
+        android:layout_height="@dimen/_32sdp"
         android:layout_marginEnd="@dimen/_15sdp"
         android:background="@drawable/bg_circle_button"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -106,11 +108,13 @@
 
     <ImageView
         android:id="@+id/btnClock"
-        android:layout_width="@dimen/_28sdp"
-        android:layout_height="@dimen/_28sdp"
+        android:layout_width="@dimen/_18sdp"
+        android:layout_height="@dimen/_18sdp"
         android:layout_margin="@dimen/_10sdp"
         android:contentDescription="@null"
         android:src="@drawable/ic_clock"
+        android:focusable="true"
+        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="@+id/cClock"
         app:layout_constraintEnd_toEndOf="@+id/cClock"
         app:layout_constraintStart_toStartOf="@+id/cClock"
@@ -118,8 +122,8 @@
 
     <View
         android:id="@+id/cFilter"
-        android:layout_width="@dimen/_48sdp"
-        android:layout_height="@dimen/_48sdp"
+        android:layout_width="@dimen/_32sdp"
+        android:layout_height="@dimen/_32sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginEnd="@dimen/_15sdp"
         android:background="@drawable/bg_circle_button"
@@ -128,87 +132,226 @@
 
     <ImageView
         android:id="@+id/btnFilter"
-        android:layout_width="@dimen/_28sdp"
-        android:layout_height="@dimen/_28sdp"
+        android:layout_width="@dimen/_18sdp"
+        android:layout_height="@dimen/_18sdp"
         android:layout_margin="@dimen/_10sdp"
         android:contentDescription="@null"
         android:src="@drawable/ic_paint_brush"
+        android:focusable="true"
+        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="@+id/cFilter"
         app:layout_constraintEnd_toEndOf="@+id/cFilter"
         app:layout_constraintStart_toStartOf="@+id/cFilter"
         app:layout_constraintTop_toTopOf="@+id/cFilter" />
 
-    <!-- Delay Buttons Container -->
+    <!-- Delay buttons -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/lDelay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_black"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:padding="@dimen/_5sdp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@id/cClock"
+        app:layout_constraintTop_toTopOf="@id/cClock">
+
+        <View
+            android:id="@+id/btn0s"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:background="@drawable/bg_black"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="@dimen/_5sdp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv0s"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0s"
+            android:textSize="@dimen/_12ssp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="@id/btn0s"
+            app:layout_constraintEnd_toEndOf="@id/btn0s"
+            app:layout_constraintTop_toTopOf="@id/btn0s"
+            app:layout_constraintBottom_toBottomOf="@id/btn0s" />
+
+        <View
+            android:id="@+id/btn3s"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:background="@drawable/bg_white"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="@dimen/_5sdp"
+            app:layout_constraintTop_toBottomOf="@+id/btn0s"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv3s"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3s"
+            android:textSize="@dimen/_12ssp"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="@id/btn3s"
+            app:layout_constraintEnd_toEndOf="@id/btn3s"
+            app:layout_constraintTop_toTopOf="@id/btn3s"
+            app:layout_constraintBottom_toBottomOf="@id/btn3s" />
+
+        <View
+            android:id="@+id/btn5s"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:background="@drawable/bg_black"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="@dimen/_5sdp"
+            app:layout_constraintTop_toBottomOf="@+id/btn3s"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv5s"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5s"
+            android:textSize="@dimen/_12ssp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="@id/btn5s"
+            app:layout_constraintEnd_toEndOf="@id/btn5s"
+            app:layout_constraintTop_toTopOf="@id/btn5s"
+            app:layout_constraintBottom_toBottomOf="@id/btn5s" />
+
+        <View
+            android:id="@+id/btn10s"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:background="@drawable/bg_black"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="@dimen/_5sdp"
+            app:layout_constraintTop_toBottomOf="@+id/btn5s"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv10s"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10s"
+            android:textSize="@dimen/_12ssp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="@id/btn10s"
+            app:layout_constraintEnd_toEndOf="@id/btn10s"
+            app:layout_constraintTop_toTopOf="@id/btn10s"
+            app:layout_constraintBottom_toBottomOf="@id/btn10s" />
+
+        <View
+            android:id="@+id/btn15s"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:background="@drawable/bg_black"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="@dimen/_5sdp"
+            app:layout_constraintTop_toBottomOf="@+id/btn10s"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv15s"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="15s"
+            android:textSize="@dimen/_12ssp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="@id/btn15s"
+            app:layout_constraintEnd_toEndOf="@id/btn15s"
+            app:layout_constraintTop_toTopOf="@id/btn15s"
+            app:layout_constraintBottom_toBottomOf="@id/btn15s" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+    <!-- setTime Buttons Container -->
     <ImageView
-        android:id="@+id/btn2s"
-        android:layout_width="@dimen/_55sdp"
-        android:layout_height="@dimen/_30sdp"
+        android:id="@+id/btn1m"
+        android:layout_width="@dimen/_35sdp"
+        android:layout_height="@dimen/_20sdp"
         android:layout_marginBottom="@dimen/_10sdp"
-        android:background="@drawable/bg_delay_button"
+        android:background="@drawable/bg_dark_grey"
         android:contentDescription="@null"
         app:layout_constraintBottom_toTopOf="@id/btnRecord"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
+        android:id="@+id/tv1m"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/inter_18pt_semibold"
-        android:text="2s"
+        android:text="1m"
         android:textColor="@color/white"
-        android:textSize="@dimen/_18ssp"
-        app:layout_constraintBottom_toBottomOf="@id/btn2s"
-        app:layout_constraintEnd_toEndOf="@id/btn2s"
-        app:layout_constraintStart_toStartOf="@id/btn2s"
-        app:layout_constraintTop_toTopOf="@id/btn2s" />
+        android:textSize="@dimen/_12ssp"
+        app:layout_constraintBottom_toBottomOf="@id/btn1m"
+        app:layout_constraintEnd_toEndOf="@id/btn1m"
+        app:layout_constraintStart_toStartOf="@id/btn1m"
+        app:layout_constraintTop_toTopOf="@id/btn1m" />
 
     <ImageView
-        android:id="@+id/btn1s"
-        android:layout_width="@dimen/_55sdp"
-        android:layout_height="@dimen/_30sdp"
+        android:id="@+id/btn30s"
+        android:layout_width="@dimen/_35sdp"
+        android:layout_height="@dimen/_20sdp"
         android:layout_marginEnd="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_10sdp"
-        android:background="@drawable/bg_delay_button"
+        android:background="@drawable/bg_dark_grey"
         android:contentDescription="@null"
         app:layout_constraintBottom_toTopOf="@+id/btnRecord"
-        app:layout_constraintEnd_toStartOf="@id/btn2s" />
+        app:layout_constraintEnd_toStartOf="@id/btn1m" />
 
     <TextView
+        android:id="@+id/tv30s"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/inter_18pt_semibold"
-        android:text="1s"
+        android:text="30s"
         android:textColor="@color/white"
-        android:textSize="@dimen/_18ssp"
-        app:layout_constraintBottom_toBottomOf="@id/btn1s"
-        app:layout_constraintEnd_toEndOf="@id/btn1s"
-        app:layout_constraintStart_toStartOf="@id/btn1s"
-        app:layout_constraintTop_toTopOf="@id/btn1s" />
+        android:textSize="@dimen/_12ssp"
+        app:layout_constraintBottom_toBottomOf="@id/btn30s"
+        app:layout_constraintEnd_toEndOf="@id/btn30s"
+        app:layout_constraintStart_toStartOf="@id/btn30s"
+        app:layout_constraintTop_toTopOf="@id/btn30s" />
 
     <ImageView
-        android:id="@+id/btn3s"
-        android:layout_width="@dimen/_55sdp"
-        android:layout_height="@dimen/_30sdp"
+        android:id="@+id/btn2m"
+        android:layout_width="@dimen/_35sdp"
+        android:layout_height="@dimen/_20sdp"
         android:layout_marginStart="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_10sdp"
-        android:background="@drawable/bg_delay_button"
+        android:background="@drawable/bg_dark_grey"
         android:contentDescription="@null"
         app:layout_constraintBottom_toTopOf="@id/btnRecord"
-        app:layout_constraintStart_toEndOf="@id/btn2s" />
+        app:layout_constraintStart_toEndOf="@id/btn1m" />
 
     <TextView
+        android:id="@+id/tv2m"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/inter_18pt_semibold"
-        android:text="3s"
+        android:text="2m"
         android:textColor="@color/white"
-        android:textSize="@dimen/_18ssp"
-        app:layout_constraintBottom_toBottomOf="@id/btn3s"
-        app:layout_constraintEnd_toEndOf="@id/btn3s"
-        app:layout_constraintStart_toStartOf="@id/btn3s"
-        app:layout_constraintTop_toTopOf="@id/btn3s" />
+        android:textSize="@dimen/_12ssp"
+        app:layout_constraintBottom_toBottomOf="@id/btn2m"
+        app:layout_constraintEnd_toEndOf="@id/btn2m"
+        app:layout_constraintStart_toStartOf="@id/btn2m"
+        app:layout_constraintTop_toTopOf="@id/btn2m" />
 
     <!-- Countdown Text -->
     <TextView
@@ -225,20 +368,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.gdd.rankingfilter.view.custom.circular_spinner.CircularSpinnerView
+        android:id="@+id/circularSpinnerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_20sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
     <ImageView
         android:id="@+id/btnRecord"
         android:layout_width="@dimen/_70sdp"
         android:layout_height="@dimen/_70sdp"
-        android:layout_marginBottom="@dimen/_40sdp"
-        android:background="@drawable/bg_record_button"
-        android:textColor="@android:color/white"
-        android:textSize="32sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/bg_record_button_unselected"
+        app:layout_constraintTop_toTopOf="@id/circularSpinnerView"
+        app:layout_constraintBottom_toBottomOf="@id/circularSpinnerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.gdd.rankingfilter.view.custom.ListRankingFilterView
-        style="@style/Widget.Theme.RankingFilter.MyView"
+        android:id="@+id/listRankingFilterView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_10sdp"
@@ -251,14 +401,15 @@
         app:layout_constraintStart_toStartOf="parent"
         android:visibility="gone"/>
 
-   <com.gdd.rankingfilter.view.custom.BracketRankingFilterView
-       android:id="@+id/bracketView"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:padding="@dimen/_10sdp"
-       android:layout_marginBottom="@dimen/_100sdp"
-       app:layout_constraintBottom_toBottomOf="parent"
-       app:layout_constraintStart_toStartOf="parent"
-       app:layout_constraintEnd_toEndOf="parent"/>
+    <com.gdd.rankingfilter.view.custom.BracketRankingFilterView
+        android:id="@+id/bracketRankingFilterView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_100sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

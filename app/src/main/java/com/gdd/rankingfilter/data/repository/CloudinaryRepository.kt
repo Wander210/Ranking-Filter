@@ -2,12 +2,16 @@ package com.gdd.rankingfilter.data.repository
 
 import android.content.Context
 import android.util.Log
+import com.gdd.rankingfilter.data.model.Image
+import com.gdd.rankingfilter.data.model.RankingItem
 import com.gdd.rankingfilter.data.model.Song
-import com.gdd.rankingfilter.util.ConfigManager
 import com.gdd.rankingfilter.data.model.Video
+import com.gdd.rankingfilter.utils.ConfigManager
+import com.gdd.rankingfilter.constant.MyConstant
 import okhttp3.Credentials
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -55,45 +59,69 @@ class CloudinaryRepository(context: Context) {
         cloudinaryService = retrofit.create(CloudinaryService::class.java)
     }
 
-    suspend fun getVideos(): List<Video> {
+    private suspend inline fun <T> fetchItems(
+        folder: String,
+        tag: String,
+        crossinline apiCall: suspend CloudinaryService.(String, String) -> Response<CloudinaryResponse<T>>
+    ): List<T> {
         return try {
             val cfg = configManager.getCloudinaryConfig() ?: return emptyList()
-            val apiResp = cloudinaryService.getVideos(
-                cloudName = cfg.cloud_name,
-                folder = "ranking_filter_videos")
-            if (apiResp.isSuccessful) apiResp.body()?.resources ?: emptyList()
+            val resp = cloudinaryService.apiCall(cfg.cloud_name, folder)
+            if (resp.isSuccessful) resp.body()?.resources ?: emptyList()
             else {
-                Log.e(
-                    "CloudinaryRepository",
-                    "HTTP ${apiResp.code()} ${apiResp.message()}"
-                )
+                Log.e(tag, "HTTP ${resp.code()} ${resp.message()}")
                 emptyList()
             }
-        } catch (t: Throwable) {
-            Log.e("CloudinaryRepository", "Exception type: ${t::class.java.simpleName}")
-            Log.e("CloudinaryRepository", "Error message: ${t.message}")
+        } catch (e: Throwable) {
+            Log.e(tag, "Error fetching items: ${e::class.java.simpleName} - ${e.message}")
             emptyList()
         }
     }
 
-    suspend fun getSongs(): List<Song> {
-        return try {
-            val cfg = configManager.getCloudinaryConfig() ?: return emptyList()
-            val apiResp = cloudinaryService.getSongs(
-                cloudName = cfg.cloud_name,
-                folder = "ranking_filter_songs")
-            if (apiResp.isSuccessful) (apiResp.body()?.resources ?: emptyList())
-            else {
-                Log.e(
-                    "CloudinaryRepository2",
-                    "HTTP ${apiResp.code()} ${apiResp.message()}"
-                )
-                emptyList()
+    /** Fetch all videos */
+    suspend fun getVideos(): List<Video> =
+        fetchItems(
+            folder = "ranking_filter_videos",
+            tag = "CloudinaryVideos",
+            apiCall = CloudinaryService::getVideos
+        )
+
+    /** Fetch all songs */
+    suspend fun getSongs(): List<Song> =
+        fetchItems(
+            folder = "ranking_filter_songs",
+            tag = "CloudinarySongs",
+            apiCall = CloudinaryService::getSongs
+        )
+    suspend fun getImages(folder: String): List<Image> =
+        fetchItems(
+            folder = folder,
+            tag = "CloudinaryImages",
+            apiCall = CloudinaryService::getImages
+        )
+
+    suspend fun getRankingItems(): List<RankingItem> {
+        val rankingItemList = mutableListOf<RankingItem>()
+        MyConstant.RANKING_TYPES.forEach { type ->
+            var folderId = 1
+            while (true) {
+                val folderName = "ranking_filter_images/$type/$folderId"
+                //call API, if it fails, break the loop
+                val images = try {
+                    getImages(folderName)
+                } catch (_: Exception) {
+                    break
+                }
+                if (images.isEmpty()) break
+                val firstSourceUrl = images.first().secure_url
+                val rankingItem = RankingItem(id = folderId, coverUrl = firstSourceUrl, type = type, imageList = images)
+                rankingItemList += rankingItem
+                folderId++
             }
-        } catch (t: Throwable) {
-            Log.e("CloudinaryRepository", "Exception type: ${t::class.java.simpleName}")
-            Log.e("CloudinaryRepository", "Error message: ${t.message}")
-            emptyList()
         }
+        return rankingItemList
     }
+
+
+    data class CloudinaryResponse<T>(val resources: List<T>)
 }

@@ -1,4 +1,4 @@
-package com.gdd.rankingfilter.util
+package com.gdd.rankingfilter.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -25,7 +25,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import java.io.Closeable
 import java.io.File
 import java.util.Collections
 

@@ -1,8 +1,6 @@
 package com.gdd.rankingfilter.view.screen.video_player
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.View
 import androidx.media3.common.MediaItem
@@ -13,7 +11,7 @@ import com.gdd.rankingfilter.R
 import com.gdd.rankingfilter.base.BaseFragment
 import com.gdd.rankingfilter.data.model.Video
 import com.gdd.rankingfilter.databinding.FragmentSingleVideoBinding
-import com.gdd.rankingfilter.util.VideoPlayerManager
+import com.gdd.rankingfilter.utils.VideoPlayerManager
 
 /**
  * A fragment that displays and controls playback of a single video.

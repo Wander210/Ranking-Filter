@@ -6,7 +6,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.gdd.rankingfilter.R
 import com.gdd.rankingfilter.data.repository.CloudinaryRepository
-import com.gdd.rankingfilter.util.VideoPlayerManager
+import com.gdd.rankingfilter.utils.VideoPlayerManager
 import com.gdd.rankingfilter.viewmodel.MainViewModel
 import com.gdd.rankingfilter.viewmodel.MainViewModelFactory
 

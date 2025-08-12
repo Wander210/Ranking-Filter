@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable name="coverUrl" type="String" />
+        <variable name="onClick"  type="android.view.View.OnClickListener"/>
+    </data>
+
+    <ImageView
+        android:id="@+id/imgCover"
+        android:layout_width="@dimen/_45sdp"
+        android:layout_height="@dimen/_45sdp"
+        android:src="@{coverUrl}"
+        android:onClick="@{onClick}"
+        android:focusable="true"
+        android:scaleType="centerCrop"
+        android:contentDescription="@null" />
+</layout>

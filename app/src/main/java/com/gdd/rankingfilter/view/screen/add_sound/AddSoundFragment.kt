@@ -6,7 +6,7 @@ import com.gdd.rankingfilter.base.BaseFragment
 import com.gdd.rankingfilter.data.model.Song
 import com.gdd.rankingfilter.data.repository.CloudinaryRepository
 import com.gdd.rankingfilter.databinding.FragmentAddSoundBinding
-import com.gdd.rankingfilter.util.VideoPlayerManager
+import com.gdd.rankingfilter.utils.VideoPlayerManager
 import com.gdd.rankingfilter.viewmodel.MainViewModel
 import com.gdd.rankingfilter.viewmodel.MainViewModelFactory
 

@@ -69,7 +69,7 @@
         android:layout_height="@dimen/_50sdp"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginBottom="@dimen/_40sdp"
-        android:background="@drawable/bottom_bar_background"
+        android:background="@drawable/bg_bottom_bar"
         android:elevation="@dimen/_10sdp"
         app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior">
 

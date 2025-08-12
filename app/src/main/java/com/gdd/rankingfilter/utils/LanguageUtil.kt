@@ -1,4 +1,4 @@
-package com.gdd.rankingfilter.util
+package com.gdd.rankingfilter.utils
 
 import android.content.Context
 import com.gdd.rankingfilter.preference.MyPreferences
