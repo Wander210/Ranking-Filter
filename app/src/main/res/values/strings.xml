@@ -20,4 +20,6 @@
     <string name="no_sound">No Sound</string>
     <string name="add_filter">Add filter</string>
     <string name="please_select_an_item">Please select an item</string>
+    <string name="preview_result">Preview result</string>
+    <string name="save">Save</string>
 </resources>

@@ -36,6 +36,7 @@ import com.gdd.rankingfilter.databinding.FragmentVideoEditorBinding
 import com.gdd.rankingfilter.view.custom.BracketRankingFilterView
 import com.gdd.rankingfilter.view.custom.ListRankingFilterView
 import com.gdd.rankingfilter.view.custom.circular_spinner.CircularSpinnerView
+import com.gdd.rankingfilter.view.screen.home.HomeFragmentDirections
 import com.gdd.rankingfilter.viewmodel.MainViewModel
 import com.gdd.rankingfilter.viewmodel.MainViewModelFactory
 import java.io.IOException
@@ -569,7 +570,10 @@ class VideoEditorFragment :
 
                 is VideoRecordEvent.Finalize -> {
                     if (!recordEvent.hasError()) {
-                        showToast("Video saved successfully")
+                        val action = VideoEditorFragmentDirections.actionVideoEditorFragmentToResultFragment(
+                            videoUrl = recordEvent.outputResults.outputUri.toString()
+                        )
+                        navigateWithAction(action)
                     } else {
                         recording?.close()
                         recording = null
@@ -597,7 +601,7 @@ class VideoEditorFragment :
                     tv2m.visibility = View.VISIBLE
                     circularSpinnerView.visibility = View.VISIBLE
                     lAddSound.visibility = View.VISIBLE
-
+                    btnRecord.setImageResource(R.drawable.bg_record_button_unselected)
                     // Resume audio after recording stops
                     resumeAudioAfterCountdown()
                 }
