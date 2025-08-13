@@ -39,7 +39,13 @@ class VideoPreviewFragment : BaseFragment<FragmentVideoPreviewBinding>(FragmentV
     override fun setUpListener() = with(binding) {
         btnBack.setOnClickListener { navigateBack() }
         btnDelete.setOnClickListener { showDeleteDialog() }
-        btnShare.setOnClickListener { navigateTo(R.id.action_videoPreviewFragment_to_shareFragment) }
+        btnShare.setOnClickListener {
+            val action = VideoPreviewFragmentDirections
+                .actionVideoPreviewFragmentToShareFragment(videoFile?.absolutePath)
+            navigateWithAction(action)
+
+
+        }
     }
 
     private fun setupMediaController() {

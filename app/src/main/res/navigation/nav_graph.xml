@@ -36,7 +36,11 @@
         android:id="@+id/settingFragment"
         android:name="com.gdd.rankingfilter.view.screen.setting.SettingFragment"
         android:label="fragment_setting"
-        tools:layout="@layout/fragment_setting" />
+        tools:layout="@layout/fragment_setting" >
+        <action
+            android:id="@+id/action_settingFragment_to_languageFragment"
+            app:destination="@id/languageFragment" />
+    </fragment>
     <fragment
         android:id="@+id/libraryFragment"
         android:name="com.gdd.rankingfilter.view.screen.library.LibraryFragment"
@@ -133,6 +137,11 @@
             app:argType="string"
             app:nullable="true" />
     </fragment>
+    <fragment
+        android:id="@+id/languageFragment"
+        android:name="com.gdd.rankingfilter.view.screen.language.LanguageFragment"
+        android:label="fragment_language"
+        tools:layout="@layout/fragment_language" />
 
 
 </navigation>
