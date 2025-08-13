@@ -45,7 +45,8 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.random.Random
 
-class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVideoEditorBinding::inflate) {
+class VideoEditorFragment :
+    BaseFragment<FragmentVideoEditorBinding>(FragmentVideoEditorBinding::inflate) {
 
     private var videoCapture: VideoCapture<Recorder>? = null
     private var recording: Recording? = null
@@ -63,6 +64,11 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
     private var currentPlayer: MediaPlayer? = null
     private var availableSongs: List<Song> = emptyList()
     private var isAudioLoading = false
+
+    // Selected sound data from AddSoundFragment
+    private var selectedSoundData: SoundSelectionData? = null
+    private var currentSelectedSong: Song? = null
+    private var audioStartPosition: Int = 0 // Position to start audio playback
 
     private lateinit var rankingItemList: List<RankingItem>
     private lateinit var circularSpinner: CircularSpinnerView
@@ -83,18 +89,37 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
         // Check and request camera permissions
         if (allPermissionsGranted()) initializeCamera()
         else permissionLauncher.launch(REQUIRED_PERMISSIONS)
+
         // Observe the selected position from the RankingItemFragment
         val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
         savedStateHandle?.getLiveData<Int>("selectedPosition")?.observe(viewLifecycleOwner) { pos ->
             currentRankingItemPos = pos
         }
+
         // Observe the selected sound data from the AddSoundFragment
-        savedStateHandle?.getLiveData<SoundSelectionData>("soundSelectionData")?.observe(viewLifecycleOwner) { soundData ->
-            Log.e("flower", soundData.selectedPosition.toString() + " |||| " + soundData.clipStartTimeMs.toString())
-        }
+        savedStateHandle?.getLiveData<SoundSelectionData>("soundSelectionData")
+            ?.observe(viewLifecycleOwner) { soundData ->
+                Log.e(
+                    "flower",
+                    "Selected sound: ${soundData.selectedPosition} | Start time: ${soundData.clipStartTimeMs}"
+                )
+                selectedSoundData = soundData
+
+                // Find the selected song and play it
+                if (soundData.selectedPosition >= 0 && soundData.selectedPosition < availableSongs.size) {
+                    currentSelectedSong = availableSongs[soundData.selectedPosition]
+                    audioStartPosition = soundData.clipStartTimeMs.toInt()
+
+                    // Stop current audio and play the selected one
+                    stopCurrentAudio()
+                    playSelectedAudio()
+                }
+            }
+
         //Load all songs
         viewModel.allSongs.observe(viewLifecycleOwner) { songs ->
-            availableSongs = songs.filter { it.public_id.isNotEmpty() && it.secure_url.isNotEmpty() }
+            availableSongs =
+                songs.filter { it.public_id.isNotEmpty() && it.secure_url.isNotEmpty() }
         }
 
         // Initialize camera executor
@@ -105,7 +130,7 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
             list.forEach { it -> coverUrlList.add(it.coverUrl) }
             circularSpinner.setItems(coverUrlList, currentRankingItemPos)
             stopCurrentAudio()
-            bindCustomViewAndPlayRandomAudio(list[0])
+            bindCustomViewAndPlayAudio(list[0])
         }
     }
 
@@ -123,6 +148,10 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
         tvAddSound.setOnClickListener { navigateTo(R.id.action_videoEditorFragment_to_addSoundFragment) }
         btnCancel.setOnClickListener {
             stopCurrentAudio()
+            // Clear selected sound data
+            selectedSoundData = null
+            currentSelectedSong = null
+            audioStartPosition = 0
             tvAddSound.text = getString(R.string.add_sound)
             btnCancel.visibility = View.GONE
         }
@@ -139,13 +168,13 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
         btn15s.setOnClickListener { selectDelayTime(15, btn15s, tv15s) }
 
         //record time button
-        btn30s.setOnClickListener {  selectRecordTime(30, btn30s, tv30s) }
+        btn30s.setOnClickListener { selectRecordTime(30, btn30s, tv30s) }
         btn1m.setOnClickListener { selectRecordTime(60, btn1m, tv1m) }
         btn2m.setOnClickListener { selectRecordTime(120, btn2m, tv2m) }
 
         circularSpinner.onItemSelectedListener = { position ->
             if (!isRecording && ::rankingItemList.isInitialized && position < rankingItemList.size)
-                bindCustomViewAndPlayRandomAudio(rankingItemList[position])
+                bindCustomViewAndPlayAudio(rankingItemList[position])
         }
     }
 
@@ -161,12 +190,12 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
         }
     }
 
-    private fun bindCustomViewAndPlayRandomAudio(rankingItem: RankingItem) {
+    private fun bindCustomViewAndPlayAudio(rankingItem: RankingItem) {
         try {
-            // Stop current audio trước khi bind view mới
+            // Stop current audio before binding new view
             stopCurrentAudio()
 
-            if(rankingItem.type == "list") {
+            if (rankingItem.type == "list") {
                 listView.visibility = View.VISIBLE
                 bracketView.visibility = View.GONE
                 binding.listRankingFilterView.setProfileData(rankingItem)
@@ -174,10 +203,27 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
                 listView.visibility = View.GONE
                 bracketView.visibility = View.VISIBLE
             }
-        } catch (_: Exception) { }
+        } catch (_: Exception) {
+        }
 
-        // Play audio sau khi đã stop audio cũ
-        playRandomAudio()
+        // Play audio after binding view
+        if (currentSelectedSong != null) {
+            // Play the selected song if available
+            playSelectedAudio()
+        } else {
+            // Play random audio if no song is selected
+            playRandomAudio()
+        }
+    }
+
+    private fun playSelectedAudio() {
+        currentSelectedSong?.let { song ->
+            Log.d(
+                "flower",
+                "Playing selected song: ${song.public_id} from position: $audioStartPosition ms"
+            )
+            playAudio(song, audioStartPosition)
+        }
     }
 
     private fun playRandomAudio() {
@@ -186,20 +232,18 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
             return
         }
 
-        // Không gọi stopCurrentAudio() ở đây nữa vì đã gọi ở bindCustomViewAndPlayRandomAudio()
-
         // Select random song
         val randomSong = availableSongs[Random.nextInt(availableSongs.size)]
         Log.d("flower", "Playing random song: ${randomSong.public_id}")
 
-        // Play the selected song
-        playAudio(randomSong)
+        // Play the selected song from beginning
+        playAudio(randomSong, 0)
     }
 
-    private fun playAudio(song: Song) {
-        Log.d("flower", "Starting playback for: ${song.public_id}")
+    private fun playAudio(song: Song, startPositionMs: Int = 0) {
+        Log.d("flower", "Starting playback for: ${song.public_id} from ${startPositionMs}ms")
 
-        // Chỉ stop nếu đang có MediaPlayer khác đang chạy
+        // Stop current player if exists
         if (currentPlayer != null) {
             stopCurrentAudio()
         }
@@ -214,22 +258,22 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
                     Log.d("flower", "MediaPlayer prepared for: ${song.public_id}")
                     isAudioLoading = false
 
-                    // Cập nhật UI để hiển thị tên bài hát
+                    // Update UI to show song name
                     binding.tvAddSound.text = song.public_id
                     binding.btnCancel.visibility = View.VISIBLE
 
-                    // Start from beginning or specific time if needed
-                    mp.seekTo(0)
+                    // Seek to the specified position and start playback
+                    mp.seekTo(startPositionMs)
                     mp.start()
 
-                    Log.d("flower", "Audio playback started")
+                    Log.d("flower", "Audio playback started from ${startPositionMs}ms")
                 }
 
                 setOnErrorListener { _, what, extra ->
                     Log.e("flower", "MediaPlayer error: what=$what, extra=$extra")
                     isAudioLoading = false
                     stopCurrentAudio()
-                    // Reset UI khi có lỗi
+                    // Reset UI on error
                     binding.tvAddSound.text = getString(R.string.add_sound)
                     binding.btnCancel.visibility = View.GONE
                     true
@@ -238,7 +282,7 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
                 setOnCompletionListener {
                     Log.d("flower", "Playback completed")
                     stopCurrentAudio()
-                    // Reset UI khi phát xong
+                    // Reset UI on completion
                     binding.tvAddSound.text = getString(R.string.add_sound)
                     binding.btnCancel.visibility = View.GONE
                 }
@@ -250,7 +294,7 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
             Log.e("flower", "Error preparing MediaPlayer", e)
             isAudioLoading = false
             stopCurrentAudio()
-            // Reset UI khi có lỗi
+            // Reset UI on error
             binding.tvAddSound.text = getString(R.string.add_sound)
             binding.btnCancel.visibility = View.GONE
         }
@@ -267,10 +311,17 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
         }
         currentPlayer = null
         isAudioLoading = false
+    }
 
-        // Reset UI khi stop audio
-        binding.tvAddSound.text = getString(R.string.add_sound)
-        binding.btnCancel.visibility = View.GONE
+    private fun resumeAudioAfterCountdown() {
+        // Resume audio after countdown based on current selection
+        if (currentSelectedSong != null) {
+            // Play selected song from the specified position
+            playSelectedAudio()
+        } else if (!isRecording) {
+            // Play random audio if no specific song is selected and not recording
+            playRandomAudio()
+        }
     }
 
     private fun initializeCamera() {
@@ -360,7 +411,7 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
         recordingTime = 0
     }
 
-    private fun selectDelayTime(seconds: Int, selectedButton: View, selectedTextView : TextView) {
+    private fun selectDelayTime(seconds: Int, selectedButton: View, selectedTextView: TextView) {
         resetDelayButtons()
         //Reset btn3s
         binding.btn3s.setBackgroundResource(R.drawable.bg_black)
@@ -372,7 +423,7 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
         delayingTime = seconds
     }
 
-    private fun selectRecordTime(seconds: Int, selectedButton: View, selectedTextView : TextView) {
+    private fun selectRecordTime(seconds: Int, selectedButton: View, selectedTextView: TextView) {
         resetRecordButtons()
         // Set selected button to white
         selectedButton.setBackgroundResource(R.drawable.bg_white)
@@ -381,11 +432,16 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
     }
 
     private fun handleRecordButtonClick() {
-        if (isRecording) stopVideoRecording()
-        else {
-            if (delayingTime > 0) startCountdownAndDelay()
-            else {
-                if(recordingTime > 0) startCountdownAndRecord()
+        if (isRecording) {
+            stopVideoRecording()
+        } else {
+            // Stop audio when starting to record
+            stopCurrentAudio()
+
+            if (delayingTime > 0) {
+                startCountdownAndDelay()
+            } else {
+                if (recordingTime > 0) startCountdownAndRecord()
                 startVideoRecording()
             }
         }
@@ -405,7 +461,11 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
             override fun onFinish() {
                 binding.countdownText.visibility = View.GONE
                 binding.btnRecord.isEnabled = true
-                if(recordingTime > 0) startCountdownAndRecord()
+
+                // Resume audio after countdown
+                resumeAudioAfterCountdown()
+
+                if (recordingTime > 0) startCountdownAndRecord()
                 startVideoRecording()
             }
         }.start()
@@ -415,7 +475,9 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
         recordingTimer = object : CountDownTimer((recordingTime * 1000).toLong(), 1000) {
             override fun onTick(millisUntilFinished: Long) {}
 
-            override fun onFinish() { stopVideoRecording() }
+            override fun onFinish() {
+                stopVideoRecording()
+            }
         }.start()
     }
 
@@ -445,7 +507,6 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
                 put(MediaStore.Video.Media.RELATIVE_PATH, "Movies/RankingFilter")
             }
-
         }
 
         val mediaStoreOutputOptions = MediaStoreOutputOptions
@@ -460,10 +521,12 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
         recording = videoCapture.output
             .prepareRecording(requireActivity(), mediaStoreOutputOptions)
             .apply {
-                if (PermissionChecker.checkSelfPermission(requireContext(),
-                        Manifest.permission.RECORD_AUDIO) ==
-                    PermissionChecker.PERMISSION_GRANTED)
-                {
+                if (PermissionChecker.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.RECORD_AUDIO
+                    ) ==
+                    PermissionChecker.PERMISSION_GRANTED
+                ) {
                     withAudioEnabled()
                 }
             }
@@ -472,53 +535,91 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
             }
     }
 
-    private fun handleRecordEvent(recordEvent: VideoRecordEvent) = with(binding) {
-        when (recordEvent) {
-            is VideoRecordEvent.Start -> {
-                btnFilter.visibility = View.GONE
-                cFilter.visibility = View.GONE
-                btnSwitchCamera.visibility = View.GONE
-                cSwitchCamera.visibility = View.GONE
-                btnClock.visibility = View.GONE
-                cClock.visibility = View.GONE
-                btn1m.visibility = View.GONE
-                tv1m.visibility = View.GONE
-                btn30s.visibility = View.GONE
-                tv30s.visibility = View.GONE
-                btn2m.visibility = View.GONE
-                tv2m.visibility = View.GONE
-                circularSpinnerView.visibility = View.INVISIBLE
-                lAddSound.visibility = View.INVISIBLE
-                binding.btnRecord.apply {
-                    isEnabled = true
-                    setImageResource(R.drawable.bg_record_button_selected)
-                }
-                isRecording = true
-                showToast("Recording started")
-            }
+    private fun handleRecordEvent(recordEvent: VideoRecordEvent) {
+        // Check if fragment is still attached to avoid crashes
+        if (!isAdded || context == null) {
+            Log.w("VideoEditor", "Fragment not attached, ignoring record event")
+            return
+        }
 
-            is VideoRecordEvent.Finalize -> {
-                if (!recordEvent.hasError()) {
-                    showToast("Video saved successfully")
-                } else {
-                    recording?.close()
-                    recording = null
-                    showToast("Video recording failed: ${recordEvent.error}")
+        with(binding) {
+            when (recordEvent) {
+                is VideoRecordEvent.Start -> {
+                    btnFilter.visibility = View.GONE
+                    cFilter.visibility = View.GONE
+                    btnSwitchCamera.visibility = View.GONE
+                    cSwitchCamera.visibility = View.GONE
+                    btnClock.visibility = View.GONE
+                    cClock.visibility = View.GONE
+                    btn1m.visibility = View.GONE
+                    tv1m.visibility = View.GONE
+                    btn30s.visibility = View.GONE
+                    tv30s.visibility = View.GONE
+                    btn2m.visibility = View.GONE
+                    tv2m.visibility = View.GONE
+                    circularSpinnerView.visibility = View.INVISIBLE
+                    lAddSound.visibility = View.GONE
+                    binding.btnRecord.apply {
+                        isEnabled = true
+                        setImageResource(R.drawable.bg_record_button_selected)
+                    }
+                    isRecording = true
+                    showToast("Recording started")
                 }
 
-                binding.btnRecord.apply {
-                    isEnabled = true
-                    setImageResource(R.drawable.bg_record_button_selected)
+                is VideoRecordEvent.Finalize -> {
+                    if (!recordEvent.hasError()) {
+                        showToast("Video saved successfully")
+                    } else {
+                        recording?.close()
+                        recording = null
+                        showToast("Video recording failed: ${recordEvent.error}")
+                    }
+
+                    binding.btnRecord.apply {
+                        isEnabled = true
+                        setImageResource(R.drawable.bg_record_button_selected)
+                    }
+                    isRecording = false
+
+                    // Show hidden UI elements again
+                    btnFilter.visibility = View.VISIBLE
+                    cFilter.visibility = View.VISIBLE
+                    btnSwitchCamera.visibility = View.VISIBLE
+                    cSwitchCamera.visibility = View.VISIBLE
+                    btnClock.visibility = View.VISIBLE
+                    cClock.visibility = View.VISIBLE
+                    btn1m.visibility = View.VISIBLE
+                    tv1m.visibility = View.VISIBLE
+                    btn30s.visibility = View.VISIBLE
+                    tv30s.visibility = View.VISIBLE
+                    btn2m.visibility = View.VISIBLE
+                    tv2m.visibility = View.VISIBLE
+                    circularSpinnerView.visibility = View.VISIBLE
+                    lAddSound.visibility = View.VISIBLE
+
+                    // Resume audio after recording stops
+                    resumeAudioAfterCountdown()
                 }
-                isRecording = false
             }
         }
     }
 
     private fun stopVideoRecording() {
-        recording?.stop()
+        recording?.let { activeRecording ->
+            try {
+                activeRecording.stop()
+                Log.d("VideoEditor", "Recording stopped successfully")
+            } catch (e: Exception) {
+                Log.e("VideoEditor", "Error stopping recording", e)
+            }
+        }
         recording = null
         isRecording = false
+
+        // Cancel recording timer if active
+        recordingTimer?.cancel()
+        recordingTimer = null
     }
 
     private fun switchCamera() {
@@ -533,16 +634,21 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
     }
 
     private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        if (isAdded && context != null) {
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onPause() {
         super.onPause()
         stopCurrentAudio()
         // Stop recording if active
-        if (isRecording) { stopVideoRecording() }
+        if (isRecording) {
+            stopVideoRecording()
+        }
         // Cancel countdown
         delayTimer?.cancel()
+        recordingTimer?.cancel()
         binding.countdownText.visibility = View.GONE
     }
 
@@ -551,6 +657,7 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
         // Clean up resources
         stopCurrentAudio()
         delayTimer?.cancel()
+        recordingTimer?.cancel()
         recording?.close()
         cameraExecutor.shutdown()
 
