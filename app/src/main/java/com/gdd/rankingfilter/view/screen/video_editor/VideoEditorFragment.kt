@@ -3,6 +3,7 @@ package com.gdd.rankingfilter.view.screen.video_editor
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.CountDownTimer
 import android.provider.MediaStore
@@ -28,6 +29,8 @@ import androidx.navigation.fragment.findNavController
 import com.gdd.rankingfilter.R
 import com.gdd.rankingfilter.base.BaseFragment
 import com.gdd.rankingfilter.data.model.RankingItem
+import com.gdd.rankingfilter.data.model.Song
+import com.gdd.rankingfilter.data.model.SoundSelectionData
 import com.gdd.rankingfilter.data.repository.CloudinaryRepository
 import com.gdd.rankingfilter.databinding.FragmentVideoEditorBinding
 import com.gdd.rankingfilter.view.custom.BracketRankingFilterView
@@ -35,10 +38,12 @@ import com.gdd.rankingfilter.view.custom.ListRankingFilterView
 import com.gdd.rankingfilter.view.custom.circular_spinner.CircularSpinnerView
 import com.gdd.rankingfilter.viewmodel.MainViewModel
 import com.gdd.rankingfilter.viewmodel.MainViewModelFactory
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.random.Random
 
 class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVideoEditorBinding::inflate) {
 
@@ -53,6 +58,11 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
     private var delayTimer: CountDownTimer? = null
     private var isRecording = false
     private var currentRankingItemPos = -1
+
+    // Audio playback variables
+    private var currentPlayer: MediaPlayer? = null
+    private var availableSongs: List<Song> = emptyList()
+    private var isAudioLoading = false
 
     private lateinit var rankingItemList: List<RankingItem>
     private lateinit var circularSpinner: CircularSpinnerView
@@ -70,15 +80,21 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
     }
 
     override fun initData() = with(binding) {
-        viewModel.loadRankingItem()
         // Check and request camera permissions
         if (allPermissionsGranted()) initializeCamera()
         else permissionLauncher.launch(REQUIRED_PERMISSIONS)
         // Observe the selected position from the RankingItemFragment
         val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
         savedStateHandle?.getLiveData<Int>("selectedPosition")?.observe(viewLifecycleOwner) { pos ->
-            Log.e("flower", pos.toString())
             currentRankingItemPos = pos
+        }
+        // Observe the selected sound data from the AddSoundFragment
+        savedStateHandle?.getLiveData<SoundSelectionData>("soundSelectionData")?.observe(viewLifecycleOwner) { soundData ->
+            Log.e("flower", soundData.selectedPosition.toString() + " |||| " + soundData.clipStartTimeMs.toString())
+        }
+        //Load all songs
+        viewModel.allSongs.observe(viewLifecycleOwner) { songs ->
+            availableSongs = songs.filter { it.public_id.isNotEmpty() && it.secure_url.isNotEmpty() }
         }
 
         // Initialize camera executor
@@ -88,19 +104,8 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
             var coverUrlList = mutableListOf<String>()
             list.forEach { it -> coverUrlList.add(it.coverUrl) }
             circularSpinner.setItems(coverUrlList, currentRankingItemPos)
-
-            // Initialize the first item
-            try {
-                val firstItem = list[0]
-                if (firstItem.type == "list") {
-                    listView.visibility = View.VISIBLE
-                    bracketView.visibility = View.GONE
-                    listRankingFilterView.setProfileData(firstItem)
-                } else {
-                    listView.visibility = View.GONE
-                    bracketView.visibility = View.VISIBLE
-                }
-            } catch (_ : Exception) { }
+            stopCurrentAudio()
+            bindCustomViewAndPlayRandomAudio(list[0])
         }
     }
 
@@ -114,8 +119,12 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
     }
 
     override fun setUpListener() = with(binding) {
-        tvAddSound.setOnClickListener {
-            navigateTo(R.id.action_videoEditorFragment_to_addSoundFragment)
+        //Sound
+        tvAddSound.setOnClickListener { navigateTo(R.id.action_videoEditorFragment_to_addSoundFragment) }
+        btnCancel.setOnClickListener {
+            stopCurrentAudio()
+            tvAddSound.text = getString(R.string.add_sound)
+            btnCancel.visibility = View.GONE
         }
         btnSwitchCamera.setOnClickListener { switchCamera() }
         btnClock.setOnClickListener { lDelay.visibility = View.VISIBLE }
@@ -128,26 +137,15 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
         btn5s.setOnClickListener { selectDelayTime(5, btn5s, tv5s) }
         btn10s.setOnClickListener { selectDelayTime(10, btn10s, tv10s) }
         btn15s.setOnClickListener { selectDelayTime(15, btn15s, tv15s) }
-        
+
         //record time button
         btn30s.setOnClickListener {  selectRecordTime(30, btn30s, tv30s) }
         btn1m.setOnClickListener { selectRecordTime(60, btn1m, tv1m) }
         btn2m.setOnClickListener { selectRecordTime(120, btn2m, tv2m) }
 
         circularSpinner.onItemSelectedListener = { position ->
-            if (!isRecording && ::rankingItemList.isInitialized && position < rankingItemList.size) {
-                try {
-                    val item = rankingItemList[position]
-                    if(item.type == "list") {
-                        listView.visibility = View.VISIBLE
-                        bracketView.visibility = View.GONE
-                        listRankingFilterView.setProfileData(item)
-                    } else {
-                        listView.visibility = View.GONE
-                        bracketView.visibility = View.VISIBLE
-                    }
-                } catch (_: Exception) { }
-            }
+            if (!isRecording && ::rankingItemList.isInitialized && position < rankingItemList.size)
+                bindCustomViewAndPlayRandomAudio(rankingItemList[position])
         }
     }
 
@@ -161,6 +159,118 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
         if (perms.values.all { it }) {
             initializeCamera()
         }
+    }
+
+    private fun bindCustomViewAndPlayRandomAudio(rankingItem: RankingItem) {
+        try {
+            // Stop current audio trước khi bind view mới
+            stopCurrentAudio()
+
+            if(rankingItem.type == "list") {
+                listView.visibility = View.VISIBLE
+                bracketView.visibility = View.GONE
+                binding.listRankingFilterView.setProfileData(rankingItem)
+            } else {
+                listView.visibility = View.GONE
+                bracketView.visibility = View.VISIBLE
+            }
+        } catch (_: Exception) { }
+
+        // Play audio sau khi đã stop audio cũ
+        playRandomAudio()
+    }
+
+    private fun playRandomAudio() {
+        if (availableSongs.isEmpty() || isAudioLoading) {
+            Log.d("flower", "No songs available or already loading")
+            return
+        }
+
+        // Không gọi stopCurrentAudio() ở đây nữa vì đã gọi ở bindCustomViewAndPlayRandomAudio()
+
+        // Select random song
+        val randomSong = availableSongs[Random.nextInt(availableSongs.size)]
+        Log.d("flower", "Playing random song: ${randomSong.public_id}")
+
+        // Play the selected song
+        playAudio(randomSong)
+    }
+
+    private fun playAudio(song: Song) {
+        Log.d("flower", "Starting playback for: ${song.public_id}")
+
+        // Chỉ stop nếu đang có MediaPlayer khác đang chạy
+        if (currentPlayer != null) {
+            stopCurrentAudio()
+        }
+
+        isAudioLoading = true
+
+        try {
+            currentPlayer = MediaPlayer().apply {
+                setDataSource(song.secure_url)
+
+                setOnPreparedListener { mp ->
+                    Log.d("flower", "MediaPlayer prepared for: ${song.public_id}")
+                    isAudioLoading = false
+
+                    // Cập nhật UI để hiển thị tên bài hát
+                    binding.tvAddSound.text = song.public_id
+                    binding.btnCancel.visibility = View.VISIBLE
+
+                    // Start from beginning or specific time if needed
+                    mp.seekTo(0)
+                    mp.start()
+
+                    Log.d("flower", "Audio playback started")
+                }
+
+                setOnErrorListener { _, what, extra ->
+                    Log.e("flower", "MediaPlayer error: what=$what, extra=$extra")
+                    isAudioLoading = false
+                    stopCurrentAudio()
+                    // Reset UI khi có lỗi
+                    binding.tvAddSound.text = getString(R.string.add_sound)
+                    binding.btnCancel.visibility = View.GONE
+                    true
+                }
+
+                setOnCompletionListener {
+                    Log.d("flower", "Playback completed")
+                    stopCurrentAudio()
+                    // Reset UI khi phát xong
+                    binding.tvAddSound.text = getString(R.string.add_sound)
+                    binding.btnCancel.visibility = View.GONE
+                }
+
+                prepareAsync()
+            }
+
+        } catch (e: IOException) {
+            Log.e("flower", "Error preparing MediaPlayer", e)
+            isAudioLoading = false
+            stopCurrentAudio()
+            // Reset UI khi có lỗi
+            binding.tvAddSound.text = getString(R.string.add_sound)
+            binding.btnCancel.visibility = View.GONE
+        }
+    }
+
+    private fun stopCurrentAudio() {
+        currentPlayer?.let { player ->
+            try {
+                if (player.isPlaying) player.stop()
+                player.release()
+            } catch (e: Exception) {
+                Log.e("flower", "Error stopping MediaPlayer", e)
+            }
+        }
+        currentPlayer = null
+        isAudioLoading = false
+
+        // Reset UI khi stop audio
+        binding.tvAddSound.text = getString(R.string.add_sound)
+        binding.btnCancel.visibility = View.GONE
     }
 
     private fun initializeCamera() {
@@ -398,9 +508,7 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
 
                 binding.btnRecord.apply {
                     isEnabled = true
-                    setBackgroundColor(
-                        ContextCompat.getColor(requireContext(), android.R.color.holo_red_light)
-                    )
+                    setImageResource(R.drawable.bg_record_button_selected)
                 }
                 isRecording = false
             }
@@ -430,7 +538,7 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
 
     override fun onPause() {
         super.onPause()
-
+        stopCurrentAudio()
         // Stop recording if active
         if (isRecording) { stopVideoRecording() }
         // Cancel countdown
@@ -441,6 +549,7 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
     override fun onDestroy() {
         super.onDestroy()
         // Clean up resources
+        stopCurrentAudio()
         delayTimer?.cancel()
         recording?.close()
         cameraExecutor.shutdown()

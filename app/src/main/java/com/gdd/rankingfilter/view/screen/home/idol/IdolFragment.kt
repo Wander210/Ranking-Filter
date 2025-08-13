@@ -21,7 +21,6 @@ class IdolFragment : BaseFragment<FragmentIdolBinding>(FragmentIdolBinding::infl
     private var currentVideoList: List<Video> = emptyList()
 
     override fun initData() {
-        viewModel.loadVideos()
         videoController = VideoListController(
             context = requireContext(),
             onVideoClick = { video -> openVideoPlayer(video) }

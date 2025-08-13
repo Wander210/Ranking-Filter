@@ -48,7 +48,7 @@ class RankingItemFragment :
             val pos = adapter.getSelectedPosition()
             if (pos != RecyclerView.NO_POSITION) {
                 // return selected position to previous fragment
-                navigateBackWithResult("selectedPosition", pos)
+                navigateBackWithResult("selectedSoundClip", pos)
             } else {
                 Toast.makeText(requireContext(), getString(R.string.please_select_an_item), Toast.LENGTH_SHORT).show()
             }

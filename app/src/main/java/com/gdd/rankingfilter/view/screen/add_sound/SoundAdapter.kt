@@ -11,6 +11,7 @@ import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import com.gdd.rankingfilter.R
 import com.gdd.rankingfilter.data.model.Song
+import com.gdd.rankingfilter.data.model.SoundSelectionData
 import com.gdd.rankingfilter.databinding.ItemSoundBinding
 import java.io.IOException
 
@@ -20,7 +21,7 @@ class SoundAdapter : RecyclerView.Adapter<SoundAdapter.SoundViewHolder>() {
         private const val TAG = "SoundAdapter"
     }
 
-    private lateinit var songList: MutableList<Song>
+    private var songList: MutableList<Song> = mutableListOf()
     private var currentPosition = 0
     private var currentPlayer: MediaPlayer? = null
     private var progressHandler = Handler(Looper.getMainLooper())
@@ -96,12 +97,25 @@ class SoundAdapter : RecyclerView.Adapter<SoundAdapter.SoundViewHolder>() {
 
     override fun getItemCount(): Int = songList.size
 
+    fun getSelectionData(): SoundSelectionData {
+        return SoundSelectionData(
+            selectedPosition = currentPosition - 1,
+            clipStartTimeMs = currentPlayingViewHolder?.getCurrentTimeMs() ?: 0L,
+            clipDurationMs = if (currentPosition < songList.size) {
+                songList[currentPosition].duration ?: 0L
+            } else 0L
+        )
+    }
+
+
     inner class SoundViewHolder(private val binding: ItemSoundBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         private var songDurationMs: Long = 0L
         private var currentTimeMs: Long = 0L
         private var currentItemPosition = -1
+
+        fun getCurrentTimeMs(): Long = currentTimeMs
 
         fun bind(item: Song, position: Int) = with(binding) {
             currentItemPosition = position

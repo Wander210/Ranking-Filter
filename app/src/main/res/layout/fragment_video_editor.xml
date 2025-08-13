@@ -36,7 +36,7 @@
 
             <TextView
                 android:id="@+id/tvAddSound"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/_100sdp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_5sdp"
                 android:ellipsize="marquee"
@@ -44,6 +44,7 @@
                 android:text="@string/add_sound"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_12ssp"
+                android:singleLine="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/imgMusicNote"
                 app:layout_constraintTop_toTopOf="parent" />
