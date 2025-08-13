@@ -26,4 +26,7 @@
     <string name="other">Other</string>
     <string name="all_challenge">All challenge</string>
     <string name="share">Share</string>
+    <string name="worldcup_ranking">Worldcup Ranking</string>
+    <string name="empty_library">Empty Library!</string>
+    <string name="looks_like_you_don_t_have_anything_here_yet_nlet_s_create_some_new_projects">Looks like you don\'t have anything here yet,\nlet\'s create some new projects.</string>
 </resources>

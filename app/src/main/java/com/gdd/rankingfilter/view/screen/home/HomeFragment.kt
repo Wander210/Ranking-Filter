@@ -70,9 +70,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         btnSetting.setOnClickListener {
             navigateTo(R.id.action_homeFragment_to_settingFragment)
         }
-
         btnCamera.setOnClickListener {
             navigateTo(R.id.action_homeFragment_to_videoEditorFragment)
+        }
+        btnPhoto.setOnClickListener {
+            navigateTo(R.id.action_homeFragment_to_libraryFragment)
         }
     }
 

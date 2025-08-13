@@ -5,6 +5,7 @@ import android.widget.ImageView
 import androidx.core.graphics.drawable.toDrawable
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.gdd.rankingfilter.extention.dpToPx
 
@@ -24,5 +25,27 @@ fun loadCover(view: ImageView, coverUrl: String?) {
         .circleCrop()
         .placeholder(Color.LTGRAY.toDrawable())
         .into(view)
+}
+
+@BindingAdapter("thumbnailUrl")
+fun loadImageSystem(imageView: ImageView, url: String?) {
+    if (!url.isNullOrEmpty()) {
+        Glide.with(imageView.context)
+            .load(url)
+            .centerCrop()
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .into(imageView)
+    }
+}
+
+@BindingAdapter("videoThumbnail")
+fun loadVideoThumbnail(imageView: ImageView, filePath: String?) {
+    if (!filePath.isNullOrEmpty()) {
+        Glide.with(imageView.context)
+            .load(filePath)
+            .centerCrop()
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .into(imageView)
+    }
 }
 

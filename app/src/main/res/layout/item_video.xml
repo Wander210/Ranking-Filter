@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/tools">
+
+    <data>
+        <variable name="title"          type="String" />
+        <variable name="thumbnailUrl"   type="String" />
+        <variable name="onClick"        type="android.view.View.OnClickListener"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_6sdp"
+        android:elevation="@dimen/_5sdp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:id="@+id/imgThumbnail"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@null"
+            android:onClick="@{onClick}"
+            android:scaleType="centerCrop"
+            bind:thumbnailUrl="@{thumbnailUrl}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="9:16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:elevation="@dimen/_10sdp"
+            android:ellipsize="marquee"
+            android:fontFamily="@font/inter_18pt_semibold"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:onClick="@{onClick}"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_14ssp"
+            android:text="@{title}"
+            app:layout_constraintBottom_toBottomOf="@id/imgThumbnail"
+            app:layout_constraintEnd_toEndOf="@id/imgThumbnail"
+            app:layout_constraintStart_toStartOf="@id/imgThumbnail" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

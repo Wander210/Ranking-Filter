@@ -119,7 +119,7 @@
             android:id="@+id/btnPhoto"
             android:layout_width="@dimen/_24sdp"
             android:layout_height="@dimen/_24sdp"
-            android:src="@drawable/ic_photo"
+            android:src="@drawable/ic_book"
             android:contentDescription="@null"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
