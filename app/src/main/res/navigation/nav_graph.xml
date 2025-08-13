@@ -23,14 +23,14 @@
             android:id="@+id/action_homeFragment_to_libraryFragment"
             app:destination="@id/libraryFragment" />
         <action
-            android:id="@+id/action_homeFragment_to_settingFragment"
-            app:destination="@id/settingFragment" />
-        <action
             android:id="@+id/action_homeFragment_to_videoEditorFragment"
             app:destination="@id/videoEditorFragment" />
         <action
             android:id="@+id/action_homeFragment_to_videoPlayerFragment"
             app:destination="@id/videoPlayerFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
@@ -45,12 +45,23 @@
         <action
             android:id="@+id/action_libraryFragment_to_videoPreviewFragment"
             app:destination="@id/videoPreviewFragment" />
+        <action
+            android:id="@+id/action_libraryFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
+        <action
+            android:id="@+id/action_libraryFragment_to_videoEditorFragment"
+            app:destination="@id/videoEditorFragment" />
     </fragment>
     <fragment
         android:id="@+id/videoPreviewFragment"
         android:name="com.gdd.rankingfilter.view.screen.video_preview.VideoPreviewFragment"
         android:label="fragment_video_preview"
         tools:layout="@layout/fragment_video_preview" >
+        <argument
+            android:name="videoPath"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
         <action
             android:id="@+id/action_videoPreviewFragment_to_shareFragment"
             app:destination="@id/shareFragment" />

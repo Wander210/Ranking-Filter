@@ -1,9 +1,11 @@
 package com.gdd.rankingfilter.view.screen.library
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
@@ -82,22 +84,21 @@ class VideoAdapter(
 
         fun bind(file: File) {
             binding.title = file.nameWithoutExtension
-
-            binding.root.setOnClickListener {
-                onVideoClick(file)
-            }
+            binding.onClick = View.OnClickListener { onVideoClick(file) }
 
             val context = binding.imgThumbnail.context
+
             Glide.with(context)
                 .load(file)
                 .apply(
                     RequestOptions()
-                        .centerCrop()
                         .placeholder(android.R.color.darker_gray)
                         .error(android.R.color.darker_gray)
+                        .priority(Priority.HIGH)
+                        .override(200, 200)
                 )
-                .transform(RoundedCorners( 20f.dpToPx(context).toInt()))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .transform(RoundedCorners(20f.dpToPx(context).toInt()))
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(binding.imgThumbnail)
 
             binding.executePendingBindings()

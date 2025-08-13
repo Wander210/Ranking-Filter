@@ -3,6 +3,7 @@ package com.gdd.rankingfilter.view.screen.library
 import android.os.Environment
 import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
+import com.gdd.rankingfilter.R
 import com.gdd.rankingfilter.base.BaseFragment
 import com.gdd.rankingfilter.databinding.FragmentLibraryBinding
 import java.io.File
@@ -26,26 +27,26 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(FragmentLibraryBind
 
     override fun setUpListener() {
         binding.btnSettings.setOnClickListener {
-            // Handle settings click
+            navigateTo(R.id.action_libraryFragment_to_settingFragment)
         }
 
         binding.btnHome.setOnClickListener {
-            // Handle home click
+            navigateBack()
         }
 
         binding.btnCamera.setOnClickListener {
-            // Handle camera click
-        }
-
-        binding.btnPhoto.setOnClickListener {
-            // Handle photo click
+            navigateTo(R.id.action_libraryFragment_to_videoEditorFragment)
         }
     }
 
     private fun setupRecyclerView() {
         videoAdapter = VideoAdapter(videoList) { file ->
-            // Handle video click
-            playVideo(file)
+            Log.d("Norman", "🚀 LibraryFragment received click for: ${file.name}")
+            Log.d("Norman", "🚀 File path: ${file.absolutePath}")
+            Log.d("Norman", "🚀 About to navigate to VideoPreview...")
+
+            // Navigate to VideoPreviewFragment when video is clicked
+            openVideoPreview(file)
         }
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 2)
@@ -61,6 +62,31 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(FragmentLibraryBind
         binding.recyclerViewVideos.apply {
             layoutManager = gridLayoutManager
             adapter = videoAdapter
+        }
+
+        Log.d("Norman", "📱 RecyclerView setup completed")
+    }
+
+    private fun openVideoPreview(file: File) {
+        try {
+            Log.d("Norman", "🎬 openVideoPreview called for: ${file.name}")
+            Log.d("Norman", "🎬 Full path: ${file.absolutePath}")
+            Log.d("Norman", "🎬 File exists: ${file.exists()}")
+
+            // Navigate to VideoPreviewFragment
+            val action = LibraryFragmentDirections.actionLibraryFragmentToVideoPreviewFragment(
+                videoPath = file.absolutePath
+            )
+
+            Log.d("Norman", "🎬 Action created with path: ${file.absolutePath}")
+            Log.d("Norman", "🎬 About to call navigateWithAction...")
+
+            navigateWithAction(action)
+
+            Log.d("Norman", "🎬 navigateWithAction completed")
+
+        } catch (e: Exception) {
+            Log.e("Norman", "❌ Error in openVideoPreview: ${e.message}", e)
         }
     }
 
@@ -147,9 +173,12 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(FragmentLibraryBind
         }
     }
 
-    private fun playVideo(file: File) {
-        // Handle video playback
-        // You can implement video player here
+    // Refresh videos when returning from VideoPreviewFragment
+    override fun onResume() {
+        super.onResume()
+        // Reload videos in case any were deleted
+        loadVideos()
+        updateUI()
     }
 
     // Data classes for video items
