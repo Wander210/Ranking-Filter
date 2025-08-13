@@ -71,6 +71,9 @@ class VideoEditorFragment :
     private var currentSelectedSong: Song? = null
     private var audioStartPosition: Int = 0 // Position to start audio playback
 
+    private var currentPlayingSongData: SoundSelectionData? = null
+    private var currentPlayingSong: Song? = null
+
     private lateinit var rankingItemList: List<RankingItem>
     private lateinit var circularSpinner: CircularSpinnerView
     private lateinit var listView: ListRankingFilterView
@@ -152,6 +155,8 @@ class VideoEditorFragment :
             // Clear selected sound data
             selectedSoundData = null
             currentSelectedSong = null
+            currentPlayingSongData = null
+            currentPlayingSong = null
             audioStartPosition = 0
             tvAddSound.text = getString(R.string.add_sound)
             btnCancel.visibility = View.GONE
@@ -219,23 +224,23 @@ class VideoEditorFragment :
 
     private fun playSelectedAudio() {
         currentSelectedSong?.let { song ->
-            Log.d(
-                "flower",
-                "Playing selected song: ${song.public_id} from position: $audioStartPosition ms"
-            )
+            currentPlayingSong = song
+            currentPlayingSongData = selectedSoundData
             playAudio(song, audioStartPosition)
         }
     }
 
     private fun playRandomAudio() {
-        if (availableSongs.isEmpty() || isAudioLoading) {
-            Log.d("flower", "No songs available or already loading")
-            return
-        }
+        if (availableSongs.isEmpty() || isAudioLoading) return
 
         // Select random song
         val randomSong = availableSongs[Random.nextInt(availableSongs.size)]
-        Log.d("flower", "Playing random song: ${randomSong.public_id}")
+        // Play the selected song from beginning
+        currentPlayingSong = randomSong
+        currentPlayingSongData = SoundSelectionData(
+            selectedPosition = availableSongs.indexOf(randomSong),
+            clipStartTimeMs = 0L
+        )
 
         // Play the selected song from beginning
         playAudio(randomSong, 0)
@@ -316,12 +321,11 @@ class VideoEditorFragment :
 
     private fun resumeAudioAfterCountdown() {
         // Resume audio after countdown based on current selection
-        if (currentSelectedSong != null) {
-            // Play selected song from the specified position
-            playSelectedAudio()
-        } else if (!isRecording) {
-            // Play random audio if no specific song is selected and not recording
-            playRandomAudio()
+        currentPlayingSong?.let { song ->
+            val startPosition = currentPlayingSongData?.clipStartTimeMs?.toInt() ?: 0
+            if (!isRecording) {
+                playAudio(song, startPosition)
+            }
         }
     }
 

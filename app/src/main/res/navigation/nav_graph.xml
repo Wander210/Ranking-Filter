@@ -9,7 +9,7 @@
         android:id="@+id/splashFragment"
         android:name="com.gdd.rankingfilter.view.screen.splash.SplashFragment"
         android:label="fragment_splash"
-        tools:layout="@layout/fragment_splash" >
+        tools:layout="@layout/fragment_splash">
         <action
             android:id="@+id/action_splashFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -18,7 +18,7 @@
         android:id="@+id/homeFragment"
         android:name="com.gdd.rankingfilter.view.screen.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_libraryFragment"
             app:destination="@id/libraryFragment" />
@@ -41,7 +41,7 @@
         android:id="@+id/libraryFragment"
         android:name="com.gdd.rankingfilter.view.screen.library.LibraryFragment"
         android:label="fragment_library"
-        tools:layout="@layout/fragment_library" >
+        tools:layout="@layout/fragment_library">
         <action
             android:id="@+id/action_libraryFragment_to_videoPreviewFragment"
             app:destination="@id/videoPreviewFragment" />
@@ -50,12 +50,16 @@
         android:id="@+id/videoPreviewFragment"
         android:name="com.gdd.rankingfilter.view.screen.video_preview.VideoPreviewFragment"
         android:label="fragment_video_preview"
-        tools:layout="@layout/fragment_video_preview" />
+        tools:layout="@layout/fragment_video_preview" >
+        <action
+            android:id="@+id/action_videoPreviewFragment_to_shareFragment"
+            app:destination="@id/shareFragment" />
+    </fragment>
     <fragment
         android:id="@+id/videoEditorFragment"
         android:name="com.gdd.rankingfilter.view.screen.video_editor.VideoEditorFragment"
         android:label="fragment_video_editor"
-        tools:layout="@layout/fragment_video_editor" >
+        tools:layout="@layout/fragment_video_editor">
         <action
             android:id="@+id/action_videoEditorFragment_to_addSoundFragment"
             app:destination="@id/addSoundFragment" />
@@ -74,14 +78,14 @@
 
         <argument
             android:name="currentIndex"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
 
         <argument
             android:name="tag"
+            android:defaultValue="@null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/addSoundFragment"
@@ -97,21 +101,27 @@
         android:id="@+id/resultFragment"
         android:name="com.gdd.rankingfilter.view.screen.result.ResultFragment"
         android:label="fragment_result"
-        tools:layout="@layout/fragment_result" >
+        tools:layout="@layout/fragment_result">
         <argument
             android:name="videoUrl"
+            android:defaultValue="@null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null"/>
+            app:nullable="true" />
         <action
             android:id="@+id/action_resultFragment_to_shareFragment"
             app:destination="@id/shareFragment" />
     </fragment>
     <fragment
         android:id="@+id/shareFragment"
-        android:name="com.gdd.rankingfilter.share.ShareFragment"
+        android:name="com.gdd.rankingfilter.view.screen.share.ShareFragment"
         android:label="fragment_share"
-        tools:layout="@layout/fragment_share" />
+        tools:layout="@layout/fragment_share">
+        <argument
+            android:name="videoUrl"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 
 
 </navigation>

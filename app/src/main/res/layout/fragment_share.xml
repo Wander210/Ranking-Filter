@@ -1,14 +1,218 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".share.ShareFragment">
+    android:background="@color/white">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!-- Back Button -->
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:src="@drawable/ic_back"
+        android:contentDescription="@null"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <!-- Title -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:text="@string/share"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_18ssp"
+        android:fontFamily="@font/inter_18pt_semibold"
+        app:layout_constraintBottom_toBottomOf="@id/btnBack"
+        app:layout_constraintStart_toEndOf="@id/btnBack"
+        app:layout_constraintTop_toTopOf="@id/btnBack" />
 
-</FrameLayout>
+    <!-- Video Player Container -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvVideoContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/_20sdp"
+        app:cardCornerRadius="@dimen/_16sdp"
+        app:layout_constraintBottom_toTopOf="@id/tvShareTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintHeight_percent="0.5">
+
+        <VideoView
+            android:id="@+id/videoView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- Play/Pause Button Overlay -->
+        <ImageView
+            android:id="@+id/btnPlayPause"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            android:padding="16dp"
+            android:src="@drawable/ic_play"
+            android:visibility="visible" />
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Share Title -->
+    <TextView
+        android:id="@+id/tvShareTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:text="@string/share_my_videos"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_20ssp"
+        android:fontFamily="@font/inter_18pt_semibold"
+        app:layout_constraintBottom_toTopOf="@id/clShareOptions"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Share Options Container (dùng ConstraintLayout, không lồng LinearLayouts) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clShareOptions"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_30sdp"
+        app:layout_constraintBottom_toTopOf="@id/btnAllChallenge"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Facebook -->
+        <ImageView
+            android:id="@+id/btnFacebook"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:src="@drawable/ic_facebook"
+            android:contentDescription="@null"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnInstagram"
+            app:layout_constraintHorizontal_chainStyle="spread" />
+
+        <TextView
+            android:id="@+id/tvFacebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:text="Facebook"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_12ssp"
+            android:fontFamily="@font/inter_18pt_semibold"
+            app:layout_constraintTop_toBottomOf="@id/btnFacebook"
+            app:layout_constraintStart_toStartOf="@id/btnFacebook"
+            app:layout_constraintEnd_toEndOf="@id/btnFacebook" />
+
+        <!-- Instagram -->
+        <ImageView
+            android:id="@+id/btnInstagram"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:src="@drawable/ic_instagram"
+            android:contentDescription="@null"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btnFacebook"
+            app:layout_constraintEnd_toStartOf="@+id/btnTiktok" />
+
+        <TextView
+            android:id="@+id/tvInstagram"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:text="Instagram"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_12ssp"
+            android:fontFamily="@font/inter_18pt_semibold"
+            app:layout_constraintTop_toBottomOf="@id/btnInstagram"
+            app:layout_constraintStart_toStartOf="@id/btnInstagram"
+            app:layout_constraintEnd_toEndOf="@id/btnInstagram" />
+
+        <!-- TikTok -->
+        <ImageView
+            android:id="@+id/btnTiktok"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:src="@drawable/ic_tiktok"
+            android:contentDescription="@null"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btnInstagram"
+            app:layout_constraintEnd_toStartOf="@+id/btnOther" />
+
+        <TextView
+            android:id="@+id/tvTiktok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:text="Tiktok"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_12ssp"
+            android:fontFamily="@font/inter_18pt_semibold"
+            app:layout_constraintTop_toBottomOf="@id/btnTiktok"
+            app:layout_constraintStart_toStartOf="@id/btnTiktok"
+            app:layout_constraintEnd_toEndOf="@id/btnTiktok" />
+
+        <!-- Other -->
+        <ImageView
+            android:id="@+id/btnOther"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:padding="@dimen/_12sdp"
+            android:src="@drawable/ic_more"
+            android:contentDescription="@null"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btnTiktok"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tvOther"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:text="@string/other"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_12ssp"
+            android:fontFamily="@font/inter_18pt_semibold"
+            app:layout_constraintTop_toBottomOf="@id/btnOther"
+            app:layout_constraintStart_toStartOf="@id/btnOther"
+            app:layout_constraintEnd_toEndOf="@id/btnOther" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!-- All Challenge Button -->
+    <LinearLayout
+        android:id="@+id/btnAllChallenge"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/bg_yellow"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/all_challenge"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_18ssp"
+            android:fontFamily="@font/inter_28pt_bold" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

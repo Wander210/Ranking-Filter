@@ -17,8 +17,6 @@ class ResultFragment : BaseFragment<FragmentResultBinding>(FragmentResultBinding
 
     override fun initData() {
         videoUri = args.videoUrl?.toUri()
-        Log.d("ResultFragment", "Video URI: $videoUri")
-        Log.d("ResultFragment", "Original video URL: ${args.videoUrl}")
     }
 
     override fun setUpView(): Unit = with(binding) {
@@ -66,7 +64,7 @@ class ResultFragment : BaseFragment<FragmentResultBinding>(FragmentResultBinding
         btnBack.setOnClickListener {
             // Make sure to delete video before navigating back
             deleteVideoIfNotSaved()
-            popBackStackTo(R.id.videoEditorFragment)
+            popBackStackTo(R.id.videoEditorFragment, true)
         }
 
         btnPlayPause.setOnClickListener {
@@ -85,7 +83,10 @@ class ResultFragment : BaseFragment<FragmentResultBinding>(FragmentResultBinding
             // Mark video as saved
             isVideoSaved = true
             // Navigate to ShareFragment
-            navigateTo(R.id.action_resultFragment_to_shareFragment)
+            val action = ResultFragmentDirections.actionResultFragmentToShareFragment(
+                videoUrl = videoUri.toString()
+            )
+            navigateWithAction(action)
         }
     }
 
@@ -120,17 +121,10 @@ class ResultFragment : BaseFragment<FragmentResultBinding>(FragmentResultBinding
         if (!isVideoSaved && videoUri != null) {
             try {
                 Log.d("ResultFragment", "Attempting to delete video: $videoUri")
-                val deleted = requireContext().contentResolver.delete(videoUri!!, null, null)
-                if (deleted > 0) {
-                    Log.d("ResultFragment", "Video deleted successfully from MediaStore")
-                } else {
-                    Log.w("ResultFragment", "Failed to delete video from MediaStore")
-                }
+                requireContext().contentResolver.delete(videoUri!!, null, null)
             } catch (e: Exception) {
                 Log.e("ResultFragment", "Error deleting video", e)
             }
-        } else {
-            Log.d("ResultFragment", "Not deleting video - isVideoSaved: $isVideoSaved, videoUri: $videoUri")
         }
     }
 }
