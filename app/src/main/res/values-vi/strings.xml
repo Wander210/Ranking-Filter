@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RankingFilter</string>
+    <string name="hello_blank_fragment">Xin chào fragment trống</string>
+    <string name="loading">ĐANG TẢI...</string>
+    <string name="this_action_may_contain_ads">Hành động này có thể chứa quảng cáo</string>
+    <string name="ranking_filter">Bộ lọc xếp hạng</string>
+    <string name="trending">Xu hướng</string>
+    <string name="football">Bóng đá</string>
+    <string name="food">Ẩm thực</string>
+    <string name="anime">Anime</string>
+    <string name="idol">Thần tượng</string>
+    <string name="makeup">Trang điểm</string>
+    <string name="cartoon">Hoạt hình</string>
+    <string name="home">Trang chủ</string>
+    <string name="gallery">Thư viện</string>
+    <string name="no_likes">Chưa có lượt thích</string>
+    <string name="add_sound">Thêm âm thanh</string>
+    <string name="song_title">Tên bài hát</string>
+    <string name="duration_0_00">0:00</string>
+    <string name="no_sound">Không có âm thanh</string>
+    <string name="add_filter">Thêm bộ lọc</string>
+    <string name="please_select_an_item">Vui lòng chọn một mục</string>
+    <string name="preview_result">Xem trước kết quả</string>
+    <string name="save">Lưu</string>
+    <string name="share_my_videos">Chia sẻ video của tôi</string>
+    <string name="other">Khác</string>
+    <string name="all_challenge">Tất cả thử thách</string>
+    <string name="share">Chia sẻ</string>
+    <string name="worldcup_ranking">Xếp hạng World Cup</string>
+    <string name="empty_library">Thư viện trống!</string>
+    <string name="looks_like_you_don_t_have_anything_here_yet_nlet_s_create_some_new_projects">Có vẻ bạn chưa có gì ở đây,
+hãy tạo vài dự án mới.</string>
+    <string name="settings">Cài đặt</string>
+    <string name="language">Ngôn ngữ</string>
+    <string name="feedback">Phản hồi</string>
+    <string name="share_app">Chia sẻ ứng dụng</string>
+    <string name="app_feedback">Phản hồi ứng dụng</string>
+    <string name="dear_support_team">Kính gửi đội hỗ trợ,
+
+</string>
+    <string name="send_email">Gửi email</string>
+    <string name="no_email_app_found">Không tìm thấy ứng dụng email</string>
+    <string name="error_opening_email">Lỗi khi mở email: %1$s</string>
+    <string name="check_out_this_awesome_app">Hãy thử ứng dụng tuyệt vời này!</string>
+</resources>

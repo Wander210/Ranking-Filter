@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RankingFilter</string>
+    <string name="hello_blank_fragment">Bonjour fragment vide</string>
+    <string name="loading">CHARGEMENT…</string>
+    <string name="this_action_may_contain_ads">Cette action peut contenir des annonces</string>
+    <string name="ranking_filter">Filtre de classement</string>
+    <string name="trending">Tendances</string>
+    <string name="football">Football</string>
+    <string name="food">Nourriture</string>
+    <string name="anime">Anime</string>
+    <string name="idol">Idole</string>
+    <string name="makeup">Maquillage</string>
+    <string name="cartoon">Dessins animés</string>
+    <string name="home">Accueil</string>
+    <string name="gallery">Galerie</string>
+    <string name="no_likes">Aucun like</string>
+    <string name="add_sound">Ajouter un son</string>
+    <string name="song_title">Titre de la chanson</string>
+    <string name="duration_0_00">0:00</string>
+    <string name="no_sound">Pas de son</string>
+    <string name="add_filter">Ajouter un filtre</string>
+    <string name="please_select_an_item">Veuillez sélectionner un élément</string>
+    <string name="preview_result">Prévisualiser le résultat</string>
+    <string name="save">Enregistrer</string>
+    <string name="share_my_videos">Partager mes vidéos</string>
+    <string name="other">Autre</string>
+    <string name="all_challenge">Tous les défis</string>
+    <string name="share">Partager</string>
+    <string name="worldcup_ranking">Classement Coupe du Monde</string>
+    <string name="empty_library">Bibliothèque vide !</string>
+    <string name="looks_like_you_don_t_have_anything_here_yet_nlet_s_create_some_new_projects">On dirait que vous n\'avez rien ici pour l\'instant,créons quelques nouveaux projets.</string>
+    <string name="settings">Paramètres</string>
+    <string name="language">Langue</string>
+    <string name="feedback">Commentaires</string>
+    <string name="share_app">Partager l\'application</string>
+    <string name="app_feedback">Retour sur l\'application</string>
+    <string name="dear_support_team">Cher équipe d\'assistance,
+
+</string>
+    <string name="send_email">Envoyer un e-mail</string>
+    <string name="no_email_app_found">Aucune application e-mail trouvée</string>
+    <string name="error_opening_email">Erreur lors de l\'ouverture de l\'e-mail : %1$s</string>
+    <string name="check_out_this_awesome_app">Découvrez cette application géniale !</string>
+</resources>
