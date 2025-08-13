@@ -2,12 +2,12 @@ package com.gdd.rankingfilter.data.repository
 
 import android.content.Context
 import android.util.Log
+import com.gdd.rankingfilter.constant.MyConstant
 import com.gdd.rankingfilter.data.model.Image
 import com.gdd.rankingfilter.data.model.RankingItem
 import com.gdd.rankingfilter.data.model.Song
 import com.gdd.rankingfilter.data.model.Video
 import com.gdd.rankingfilter.utils.ConfigManager
-import com.gdd.rankingfilter.constant.MyConstant
 import okhttp3.Credentials
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -93,6 +93,7 @@ class CloudinaryRepository(context: Context) {
             tag = "CloudinarySongs",
             apiCall = CloudinaryService::getSongs
         )
+
     suspend fun getImages(folder: String): List<Image> =
         fetchItems(
             folder = folder,
@@ -103,25 +104,71 @@ class CloudinaryRepository(context: Context) {
     suspend fun getRankingItems(): List<RankingItem> {
         val rankingItemList = mutableListOf<RankingItem>()
         MyConstant.RANKING_TYPES.forEach { type ->
-            var folderId = 1
-            while (true) {
-                val folderName = "ranking_filter_images/$type/$folderId"
-                //call API, if it fails, break the loop
-                val images = try {
-                    getImages(folderName)
-                } catch (_: Exception) {
-                    break
+
+            val folders = getFolderNames("ranking_filter_images/$type")
+            for (folderName in folders) {
+                Log.e("Flower", "Folder found: $folderName")
+                try {
+                    val fullFolderPath = "ranking_filter_images/$type/$folderName"
+                    var images = getImages(fullFolderPath)
+
+                    if (images.isEmpty()) {
+                        Log.w("Flower", "No images found in folder: $fullFolderPath — skipping")
+                        continue
+                    }
+
+                    val firstSourceUrl = images.firstOrNull()?.secure_url
+                    if (firstSourceUrl.isNullOrBlank()) {
+                        Log.w("Flower", "First image has no secure_url in $fullFolderPath — skipping")
+                        continue
+                    }
+
+                    val rankingItem = RankingItem(
+                        id = folderName,
+                        coverUrl = firstSourceUrl,
+                        type = type,
+                        imageList = images
+                    )
+                    rankingItemList += rankingItem
+                } catch (e: Throwable) {
+                    Log.e("Flower", "Error processing folder $folderName: ${e::class.java.simpleName} - ${e.message}")
                 }
-                if (images.isEmpty()) break
-                val firstSourceUrl = images.first().secure_url
-                val rankingItem = RankingItem(id = folderId, coverUrl = firstSourceUrl, type = type, imageList = images)
-                rankingItemList += rankingItem
-                folderId++
             }
         }
         return rankingItemList
     }
 
+
+    suspend fun getFolderNames(parentFolderPath: String): List<String> {
+        return try {
+            val cfg = configManager.getCloudinaryConfig() ?: return emptyList()
+            val names = mutableListOf<String>()
+            var nextCursor: String? = null
+
+            do {
+                val resp = cloudinaryService.getSubFolders(
+                    cfg.cloud_name,
+                    parentFolderPath,
+                    maxResults = 100,
+                    nextCursor = nextCursor
+                )
+                if (!resp.isSuccessful) {
+                    Log.e("CloudinaryFolders", "HTTP ${resp.code()} ${resp.message()}")
+                    break
+                }
+                val body = resp.body() ?: break
+                names += body.folders.map { it.name }
+                nextCursor = body.next_cursor
+            } while (!nextCursor.isNullOrBlank())
+            names
+        } catch (e: Throwable) {
+            Log.e(
+                "CloudinaryFolders",
+                "Error fetching folder names: ${e::class.java.simpleName} - ${e.message}"
+            )
+            emptyList()
+        }
+    }
 
     data class CloudinaryResponse<T>(val resources: List<T>)
 }

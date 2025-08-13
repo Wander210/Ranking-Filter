@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.CountDownTimer
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -23,6 +24,7 @@ import androidx.camera.video.VideoRecordEvent
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.gdd.rankingfilter.R
 import com.gdd.rankingfilter.base.BaseFragment
 import com.gdd.rankingfilter.data.model.RankingItem
@@ -44,12 +46,13 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
     private var recording: Recording? = null
     private lateinit var cameraExecutor: ExecutorService
     private var cameraProvider: ProcessCameraProvider? = null
-    private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
+    private var lensFacing: Int = CameraSelector.LENS_FACING_FRONT
     private var delayingTime = 0
     private var recordingTime = 0
     private var recordingTimer: CountDownTimer? = null
     private var delayTimer: CountDownTimer? = null
     private var isRecording = false
+    private var currentRankingItemPos = -1
 
     private lateinit var rankingItemList: List<RankingItem>
     private lateinit var circularSpinner: CircularSpinnerView
@@ -67,9 +70,16 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
     }
 
     override fun initData() = with(binding) {
+        viewModel.loadRankingItem()
         // Check and request camera permissions
         if (allPermissionsGranted()) initializeCamera()
         else permissionLauncher.launch(REQUIRED_PERMISSIONS)
+        // Observe the selected position from the RankingItemFragment
+        val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
+        savedStateHandle?.getLiveData<Int>("selectedPosition")?.observe(viewLifecycleOwner) { pos ->
+            Log.e("flower", pos.toString())
+            currentRankingItemPos = pos
+        }
 
         // Initialize camera executor
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -77,7 +87,7 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
             rankingItemList = list
             var coverUrlList = mutableListOf<String>()
             list.forEach { it -> coverUrlList.add(it.coverUrl) }
-            circularSpinner.setItems(coverUrlList)
+            circularSpinner.setItems(coverUrlList, currentRankingItemPos)
 
             // Initialize the first item
             try {
@@ -104,14 +114,12 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
     }
 
     override fun setUpListener() = with(binding) {
-        // Existing listener
         tvAddSound.setOnClickListener {
             navigateTo(R.id.action_videoEditorFragment_to_addSoundFragment)
         }
-
         btnSwitchCamera.setOnClickListener { switchCamera() }
         btnClock.setOnClickListener { lDelay.visibility = View.VISIBLE }
-
+        btnFilter.setOnClickListener { navigateTo(R.id.action_videoEditorFragment_to_rankingItemFragment) }
         btnRecord.setOnClickListener { handleRecordButtonClick() }
 
         // Delay buttons
@@ -354,14 +362,26 @@ class VideoEditorFragment : BaseFragment<FragmentVideoEditorBinding>(FragmentVid
             }
     }
 
-    private fun handleRecordEvent(recordEvent: VideoRecordEvent) {
+    private fun handleRecordEvent(recordEvent: VideoRecordEvent) = with(binding) {
         when (recordEvent) {
             is VideoRecordEvent.Start -> {
+                btnFilter.visibility = View.GONE
+                cFilter.visibility = View.GONE
+                btnSwitchCamera.visibility = View.GONE
+                cSwitchCamera.visibility = View.GONE
+                btnClock.visibility = View.GONE
+                cClock.visibility = View.GONE
+                btn1m.visibility = View.GONE
+                tv1m.visibility = View.GONE
+                btn30s.visibility = View.GONE
+                tv30s.visibility = View.GONE
+                btn2m.visibility = View.GONE
+                tv2m.visibility = View.GONE
+                circularSpinnerView.visibility = View.INVISIBLE
+                lAddSound.visibility = View.INVISIBLE
                 binding.btnRecord.apply {
                     isEnabled = true
-                    setBackgroundColor(
-                        ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark)
-                    )
+                    setImageResource(R.drawable.bg_record_button_selected)
                 }
                 isRecording = true
                 showToast("Recording started")

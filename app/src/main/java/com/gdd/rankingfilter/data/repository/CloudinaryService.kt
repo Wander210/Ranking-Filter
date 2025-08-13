@@ -1,5 +1,6 @@
 package com.gdd.rankingfilter.data.repository
 
+import com.gdd.rankingfilter.data.model.FoldersResponse
 import com.gdd.rankingfilter.data.model.Image
 import com.gdd.rankingfilter.data.model.Song
 import com.gdd.rankingfilter.data.model.Video
@@ -36,4 +37,12 @@ interface CloudinaryService {
         @Query("max_results") maxResults: Int = 50,
         @Query("next_cursor") nextCursor: String? = null,
     ): Response<CloudinaryResponse<Image>>
+
+    @GET("v1_1/{cloud_name}/folders/{folderPath}")
+    suspend fun getSubFolders(
+        @Path("cloud_name") cloudName: String,
+        @Path("folderPath") folderPath: String,
+        @Query("max_results") maxResults: Int = 100,
+        @Query("next_cursor") nextCursor: String? = null
+    ): Response<FoldersResponse>
 }

@@ -25,12 +25,6 @@ class MainViewModel(
     private val _allRankingItems = MutableLiveData<List<RankingItem>>()
     val allRankingItems: LiveData<List<RankingItem>> = _allRankingItems
 
-    init {
-        loadVideos()
-        loadSongs()
-        loadRankingItem()
-    }
-
     fun loadVideos() {
         viewModelScope.launch {
             try {

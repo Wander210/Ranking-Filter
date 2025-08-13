@@ -17,8 +17,10 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lAddSound"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:elevation="@dimen/_5sdp"
             android:paddingHorizontal="@dimen/_6sdp"
             android:paddingVertical="@dimen/_4sdp">
 
@@ -78,6 +80,7 @@
         android:layout_height="@dimen/_32sdp"
         android:layout_marginEnd="@dimen/_15sdp"
         android:layout_marginBottom="@dimen/_10sdp"
+        android:elevation="@dimen/_5sdp"
         android:background="@drawable/bg_circle_button"
         app:layout_constraintBottom_toTopOf="@id/cClock"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -91,6 +94,7 @@
         android:src="@drawable/ic_reload"
         android:focusable="true"
         android:clickable="true"
+        android:elevation="@dimen/_5sdp"
         app:layout_constraintBottom_toBottomOf="@+id/cSwitchCamera"
         app:layout_constraintEnd_toEndOf="@+id/cSwitchCamera"
         app:layout_constraintStart_toStartOf="@+id/cSwitchCamera"
@@ -101,6 +105,7 @@
         android:layout_width="@dimen/_32sdp"
         android:layout_height="@dimen/_32sdp"
         android:layout_marginEnd="@dimen/_15sdp"
+        android:elevation="@dimen/_5sdp"
         android:background="@drawable/bg_circle_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -115,6 +120,7 @@
         android:src="@drawable/ic_clock"
         android:focusable="true"
         android:clickable="true"
+        android:elevation="@dimen/_5sdp"
         app:layout_constraintBottom_toBottomOf="@+id/cClock"
         app:layout_constraintEnd_toEndOf="@+id/cClock"
         app:layout_constraintStart_toStartOf="@+id/cClock"
@@ -127,6 +133,7 @@
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginEnd="@dimen/_15sdp"
         android:background="@drawable/bg_circle_button"
+        android:elevation="@dimen/_5sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cClock" />
 
@@ -139,6 +146,7 @@
         android:src="@drawable/ic_paint_brush"
         android:focusable="true"
         android:clickable="true"
+        android:elevation="@dimen/_5sdp"
         app:layout_constraintBottom_toBottomOf="@+id/cFilter"
         app:layout_constraintEnd_toEndOf="@+id/cFilter"
         app:layout_constraintStart_toStartOf="@+id/cFilter"
@@ -153,7 +161,7 @@
         android:background="@drawable/bg_black"
         android:layout_marginEnd="@dimen/_10sdp"
         android:padding="@dimen/_5sdp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@id/cClock"
         app:layout_constraintTop_toTopOf="@id/cClock">
 
@@ -287,6 +295,7 @@
         android:layout_height="@dimen/_20sdp"
         android:layout_marginBottom="@dimen/_10sdp"
         android:background="@drawable/bg_dark_grey"
+        android:elevation="@dimen/_5sdp"
         android:contentDescription="@null"
         app:layout_constraintBottom_toTopOf="@id/btnRecord"
         app:layout_constraintEnd_toEndOf="parent"
@@ -300,6 +309,7 @@
         android:text="1m"
         android:textColor="@color/white"
         android:textSize="@dimen/_12ssp"
+        android:elevation="@dimen/_5sdp"
         app:layout_constraintBottom_toBottomOf="@id/btn1m"
         app:layout_constraintEnd_toEndOf="@id/btn1m"
         app:layout_constraintStart_toStartOf="@id/btn1m"
@@ -313,6 +323,7 @@
         android:layout_marginBottom="@dimen/_10sdp"
         android:background="@drawable/bg_dark_grey"
         android:contentDescription="@null"
+        android:elevation="@dimen/_5sdp"
         app:layout_constraintBottom_toTopOf="@+id/btnRecord"
         app:layout_constraintEnd_toStartOf="@id/btn1m" />
 
@@ -324,6 +335,7 @@
         android:text="30s"
         android:textColor="@color/white"
         android:textSize="@dimen/_12ssp"
+        android:elevation="@dimen/_5sdp"
         app:layout_constraintBottom_toBottomOf="@id/btn30s"
         app:layout_constraintEnd_toEndOf="@id/btn30s"
         app:layout_constraintStart_toStartOf="@id/btn30s"
@@ -337,6 +349,7 @@
         android:layout_marginBottom="@dimen/_10sdp"
         android:background="@drawable/bg_dark_grey"
         android:contentDescription="@null"
+        android:elevation="@dimen/_5sdp"
         app:layout_constraintBottom_toTopOf="@id/btnRecord"
         app:layout_constraintStart_toEndOf="@id/btn1m" />
 
@@ -348,6 +361,7 @@
         android:text="2m"
         android:textColor="@color/white"
         android:textSize="@dimen/_12ssp"
+        android:elevation="@dimen/_5sdp"
         app:layout_constraintBottom_toBottomOf="@id/btn2m"
         app:layout_constraintEnd_toEndOf="@id/btn2m"
         app:layout_constraintStart_toStartOf="@id/btn2m"
@@ -379,8 +393,10 @@
 
     <ImageView
         android:id="@+id/btnRecord"
-        android:layout_width="@dimen/_70sdp"
-        android:layout_height="@dimen/_70sdp"
+        android:layout_width="@dimen/_60sdp"
+        android:layout_height="@dimen/_60sdp"
+        android:contentDescription="@null"
+        android:elevation="@dimen/_5sdp"
         android:background="@drawable/bg_record_button_unselected"
         app:layout_constraintTop_toTopOf="@id/circularSpinnerView"
         app:layout_constraintBottom_toBottomOf="@id/circularSpinnerView"

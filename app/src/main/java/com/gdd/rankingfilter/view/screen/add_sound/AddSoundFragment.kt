@@ -21,6 +21,7 @@ class AddSoundFragment : BaseFragment<FragmentAddSoundBinding>(FragmentAddSoundB
 
     override fun initData() {
         playerManager = VideoPlayerManager.getInstance(requireContext())
+        viewModel.loadSongs()
     }
 
     override fun setUpView() = with(binding){
@@ -38,6 +39,7 @@ class AddSoundFragment : BaseFragment<FragmentAddSoundBinding>(FragmentAddSoundB
     }
 
     override fun setUpListener() {
+
     }
 
     override fun onPause() {

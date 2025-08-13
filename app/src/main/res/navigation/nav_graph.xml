@@ -59,6 +59,9 @@
         <action
             android:id="@+id/action_videoEditorFragment_to_addSoundFragment"
             app:destination="@id/addSoundFragment" />
+        <action
+            android:id="@+id/action_videoEditorFragment_to_rankingItemFragment"
+            app:destination="@id/rankingItemFragment" />
     </fragment>
     <fragment
         android:id="@+id/videoPlayerFragment"
@@ -82,6 +85,11 @@
         android:name="com.gdd.rankingfilter.view.screen.add_sound.AddSoundFragment"
         android:label="fragment_add_sound"
         tools:layout="@layout/fragment_add_sound" />
+    <fragment
+        android:id="@+id/rankingItemFragment"
+        android:name="com.gdd.rankingfilter.view.screen.ranking_item.RankingItemFragment"
+        android:label="fragment_ranking_item"
+        tools:layout="@layout/fragment_ranking_item" />
 
 
 </navigation>

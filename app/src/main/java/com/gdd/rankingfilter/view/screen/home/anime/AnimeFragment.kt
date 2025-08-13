@@ -1,6 +1,5 @@
 package com.gdd.rankingfilter.view.screen.home.anime
 
-import android.util.Log
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.gdd.rankingfilter.base.BaseFragment
@@ -21,6 +20,7 @@ class AnimeFragment : BaseFragment<FragmentAnimeBinding>(FragmentAnimeBinding::i
     private var currentVideoList: List<Video> = emptyList()
 
     override fun initData() {
+        viewModel.loadVideos()
         videoController = VideoListController(
             context = requireContext(),
             onVideoClick = { video -> openVideoPlayer(video) }

@@ -35,6 +35,7 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>(FragmentVid
     }
 
     override fun initData() {
+        viewModel.loadVideos()
         playerManager = VideoPlayerManager.getInstance(requireContext())
         videoAdapter = VideoFeedAdapter(this)
     }

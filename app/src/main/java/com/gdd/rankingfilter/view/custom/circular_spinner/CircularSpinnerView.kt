@@ -126,7 +126,7 @@ class CircularSpinnerView @JvmOverloads constructor(
         }
     }
 
-    fun setItems(newItems: List<String>) {
+    fun setItems(newItems: List<String>, currentPos: Int) {
         coverUrlList = newItems
         if (coverUrlList.isNotEmpty()) {
             spinnerAdapter =
@@ -134,17 +134,8 @@ class CircularSpinnerView @JvmOverloads constructor(
                     handleItemClick(clickedView, position)
                 }
             adapter = spinnerAdapter
-
-            post {
-                val middleIndex = coverUrlList.size / 2
-                val startPosition = 5000 + middleIndex
-                // Scroll to the position near the middle
-                scrollToPosition(startPosition - 2)
-                /// Smooth scroll to the middle
-                postDelayed({
-                    smoothScrollToPosition(startPosition)
-                }, 50)
-            }
+            if(currentPos >= 0) scrollToTargetPosition(currentPos)
+            else scrollToTargetPosition(coverUrlList.size / 2)
         }
     }
 
@@ -169,5 +160,16 @@ class CircularSpinnerView @JvmOverloads constructor(
         }
         smoothScroller.targetPosition = position - 1
         linearLayoutManager.startSmoothScroll(smoothScroller)
+    }
+
+    fun scrollToTargetPosition(targetPosition: Int) {
+        if (coverUrlList.isEmpty() || targetPosition < 0 || targetPosition >= coverUrlList.size) return
+        val targetActualPosition = 5000 + (coverUrlList.size - 5000 % coverUrlList.size - 1) +  targetPosition
+        post {
+            // Scroll to the position near the middle
+            scrollToPosition(targetActualPosition - 2)
+            // Smooth scroll to the middle
+            smoothScrollToPosition(targetActualPosition)
+        }
     }
 }
